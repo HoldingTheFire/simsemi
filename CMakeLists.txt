@@ -119,3 +119,14 @@ endif()
 if(MINGW)
     target_link_options(simgui PRIVATE -mconsole)
 endif()
+
+# --- Test harness ---
+add_executable(simtest
+    test/test_harness.cpp
+    cli/wiofunc_cli.cpp
+)
+target_include_directories(simtest PRIVATE
+    ${CMAKE_SOURCE_DIR}/NUMERIC/INCLUDE
+    ${CMAKE_SOURCE_DIR}/Formulc
+)
+target_link_libraries(simtest PRIVATE numeric formulc)
