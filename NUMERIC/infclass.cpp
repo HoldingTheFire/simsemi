@@ -393,7 +393,7 @@ prec TDeviceFileInput::get_material_param(MaterialParam param_number,prec *value
 	int i=0;
 	logical result_obtained=FALSE;
 	prec result, next_length=0;
-	extern char *material_parameters_variables[];
+	extern const char *material_parameters_variables[];
 
 	assert(material_param_entered(param_number));
 

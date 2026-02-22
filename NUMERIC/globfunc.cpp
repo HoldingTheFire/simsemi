@@ -901,7 +901,7 @@ string int_to_string(int value)
 
 string get_short_string(FlagType flag_type, flag flag_value)
 {
-	extern char **short_string_table[];
+	extern const char **short_string_table[];
 
 	assert(TValueFlag::valid_single_flag(flag_type,flag_value));
 	assert(valid_short_string(flag_type,flag_value));
@@ -910,7 +910,7 @@ string get_short_string(FlagType flag_type, flag flag_value)
 
 string get_long_string(FlagType flag_type, flag flag_value)
 {
-	extern char **long_string_table[];
+	extern const char **long_string_table[];
 
 	assert(TValueFlag::valid_single_flag(flag_type,flag_value));
 	assert(valid_long_string(flag_type,flag_value));
@@ -924,7 +924,7 @@ void long_string_to_flag(string long_string, FlagType& flag_type, flag& flag_val
 	flag max_flag, test_flag;
 	logical match=FALSE;
 	TValueFlag flag_class;
-	extern char **long_string_table[];
+	extern const char **long_string_table[];
 
 	flag_type=(FlagType)0;
 	flag_value=(flag)0;
@@ -956,7 +956,7 @@ void short_string_to_flag(string short_string, FlagType& flag_type, flag& flag_v
 	flag max_flag, test_flag;
 	logical match=FALSE;
 	TValueFlag flag_class;
-	extern char **short_string_table[];
+	extern const char **short_string_table[];
 
 	flag_type=(FlagType)0;
 	flag_value=(flag)0;
@@ -985,7 +985,7 @@ int material_string_to_value(string material_string)
 {
 	int i=0;
 	logical match=FALSE;
-	extern char *material_parameters_strings[];
+	extern const char *material_parameters_strings[];
 
 	while (!match && i<MAT_MAX_NUMBER_PARAMETERS) {
 		match=(material_parameters_strings[i]==material_string);
@@ -997,7 +997,7 @@ int material_string_to_value(string material_string)
 
 string material_value_to_string(int material_value)
 {
-	extern char *material_parameters_strings[];
+	extern const char *material_parameters_strings[];
 
 	assert((material_value>=1) && (material_value<=MAT_MAX_NUMBER_PARAMETERS));
 	return(material_parameters_strings[material_value-1]);
@@ -1142,7 +1142,7 @@ string get_status_string(StatusType status)
 
 logical valid_short_string(FlagType flag_type, flag flag_value)
 {
-	extern char **short_string_table[];
+	extern const char **short_string_table[];
 	logical result=TRUE;
 	int bit;
 
@@ -1155,7 +1155,7 @@ logical valid_short_string(FlagType flag_type, flag flag_value)
 
 logical valid_long_string(FlagType flag_type, flag flag_value)
 {
-	extern char **long_string_table[];
+	extern const char **long_string_table[];
 	logical result=TRUE;
 
 	result&=(string(long_string_table[(int)(flag_type-1)][bit_position(flag_value)])=="") ? FALSE : TRUE;

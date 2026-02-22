@@ -889,7 +889,7 @@ void TParseDevice::process_radius(string line_string)
 void TParseDevice::process_material_param(string line_string, MaterialParam param)
 {
 	MaterialParamInput new_param_input;
-	extern char *material_parameters_variables[];
+	extern const char *material_parameters_variables[];
 
 	new_param_input.length=get_float(line_string,"LENGTH");
 	if (error_handler.fail()) return;
@@ -988,7 +988,7 @@ void TParseMaterial::process_alloy(string line_string)
 	MaterialParam i,j;
 	logical mat_processed;
 	string alloy_name, parameter_line;
-	extern char *material_parameters_variables[];
+	extern const char *material_parameters_variables[];
 
 	alloy_name=get_name(line_string,"ALLOY");
 	if (error_handler.fail()) return;
