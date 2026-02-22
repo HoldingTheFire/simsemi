@@ -130,3 +130,41 @@ target_include_directories(simtest PRIVATE
     ${CMAKE_SOURCE_DIR}/Formulc
 )
 target_link_libraries(simtest PRIVATE numeric formulc)
+
+# --- Install rules ---
+install(TARGETS simgui simcli RUNTIME DESTINATION bin)
+install(FILES PROJECT/MATERIAL.PRM DESTINATION bin RENAME material.prm)
+install(DIRECTORY test/ DESTINATION share/simwindows/examples
+    FILES_MATCHING PATTERN "*.dev")
+
+# Bundle SDL2 DLL on Windows (MinGW)
+if(MINGW)
+    # Find SDL2 DLL next to the import library
+    get_target_property(_sdl2_imported_loc SDL2::SDL2 IMPORTED_LOCATION)
+    if(_sdl2_imported_loc)
+        install(FILES "${_sdl2_imported_loc}" DESTINATION bin)
+    else()
+        # Fallback: look in standard MSYS2 bin dir
+        find_file(SDL2_DLL_PATH SDL2.dll
+            PATHS "${SDL2_LIBDIR}/../bin" "/ucrt64/bin" "/mingw64/bin"
+            NO_DEFAULT_PATH)
+        if(SDL2_DLL_PATH)
+            install(FILES "${SDL2_DLL_PATH}" DESTINATION bin)
+        endif()
+    endif()
+endif()
+
+# --- CPack packaging ---
+set(CPACK_PACKAGE_NAME "SimWindows")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "1D Semiconductor Device Simulator")
+set(CPACK_PACKAGE_VENDOR "David W. Winston")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+
+if(WIN32)
+    set(CPACK_GENERATOR "ZIP")
+else()
+    set(CPACK_GENERATOR "TGZ")
+endif()
+
+include(CPack)
