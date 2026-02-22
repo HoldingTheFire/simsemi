@@ -22,9 +22,11 @@
  * Usage:  simcli [options] <device-file>
  *
  * Options:
- *   -m <path>    Path to material parameter file (default: material.prm
- *                in the same directory as the executable)
- *   -o <path>    Write simulation state to this file after solving
+ *   -m <path>                     Material parameter file
+ *   -o <path>                     Write state file after solving
+ *   -sweep <start>,<end>,<step>   Voltage sweep on contact 0
+ *   -csv <path>                   Write sweep results as CSV
+ *   -data <path>                  Write spatial profile data after solve
  *
  * SIMSTRCT.H declares the following globals as extern; they were previously
  * defined in OWL/simwin.cpp.  The CLI must define them here.
@@ -40,6 +42,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cmath>
 
 // Global objects required by the NUMERIC library (declared extern in SIMSTRCT.H).
 // TMacroStorage is OWL-side and never accessed by NUMERIC, so omitted here.
@@ -55,9 +58,26 @@ static void print_usage(const char* prog)
         "SimWindows CLI — 1D Semiconductor Device Simulator\n"
         "Usage: %s [options] <device-file>\n\n"
         "Options:\n"
-        "  -m <path>   Material parameter file (default: <exe-dir>/material.prm)\n"
-        "  -o <path>   Write state file after solving\n"
-        "  -h          Show this help\n", prog);
+        "  -m <path>                     Material parameter file (default: <exe-dir>/material.prm)\n"
+        "  -o <path>                     Write state file after solving\n"
+        "  -sweep <start>,<end>,<step>   Voltage sweep applied to contact 0\n"
+        "  -csv <path>                   Write sweep results as CSV\n"
+        "  -data <path>                  Write spatial profile data after solve\n"
+        "  -h                            Show this help\n", prog);
+}
+
+// Parse "-sweep start,end,step" into three doubles. Returns true on success.
+static bool parse_sweep(const char* arg, double& start, double& end, double& step)
+{
+    char* p;
+    start = strtod(arg, &p);
+    if (*p != ',') return false;
+    end = strtod(p + 1, &p);
+    if (*p != ',') return false;
+    step = strtod(p + 1, &p);
+    if (*p != '\0') return false;
+    if (step == 0.0) return false;
+    return true;
 }
 
 // Set executable_path global to the directory containing the executable.
@@ -104,6 +124,9 @@ int main(int argc, char* argv[])
     const char* material_file = nullptr;
     const char* output_file = nullptr;
     const char* device_file = nullptr;
+    const char* sweep_arg = nullptr;
+    const char* csv_file = nullptr;
+    const char* data_file = nullptr;
 
     // Parse command-line arguments
     for (int i = 1; i < argc; i++) {
@@ -111,6 +134,12 @@ int main(int argc, char* argv[])
             material_file = argv[++i];
         } else if (strcmp(argv[i], "-o") == 0 && i + 1 < argc) {
             output_file = argv[++i];
+        } else if (strcmp(argv[i], "-sweep") == 0 && i + 1 < argc) {
+            sweep_arg = argv[++i];
+        } else if (strcmp(argv[i], "-csv") == 0 && i + 1 < argc) {
+            csv_file = argv[++i];
+        } else if (strcmp(argv[i], "-data") == 0 && i + 1 < argc) {
+            data_file = argv[++i];
         } else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
             print_usage(argv[0]);
             return 0;
@@ -126,6 +155,19 @@ int main(int argc, char* argv[])
     if (!device_file) {
         print_usage(argv[0]);
         return 2;
+    }
+
+    // Parse sweep parameters if provided
+    double sweep_start = 0, sweep_end = 0, sweep_step = 0;
+    if (sweep_arg) {
+        if (!parse_sweep(sweep_arg, sweep_start, sweep_end, sweep_step)) {
+            fprintf(stderr, "Invalid -sweep format. Expected: -sweep start,end,step\n");
+            return 2;
+        }
+        if ((sweep_end - sweep_start) / sweep_step < 0) {
+            fprintf(stderr, "Sweep step sign doesn't match start→end direction.\n");
+            return 2;
+        }
     }
 
     // 1. Initialize random number generator (as OWL constructor did)
@@ -156,22 +198,81 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    // 5. Solve
-    printf("Solving...\n");
-    environment.solve();
+    // --- Voltage sweep mode ---
+    if (sweep_arg) {
+        // Open CSV file if requested
+        FILE* csv_fp = nullptr;
+        if (csv_file) {
+            csv_fp = fopen(csv_file, "w");
+            if (!csv_fp) {
+                fprintf(stderr, "Cannot open CSV file: %s\n", csv_file);
+                return 1;
+            }
+            fprintf(csv_fp, "Voltage(V),Current(A/cm2)\n");
+        }
 
-    if (error_handler.fail()) {
-        fprintf(stderr, "Solve failed: %s\n",
-                error_handler.get_error_string().c_str());
-        return 1;
+        int num_steps = (int)std::round((sweep_end - sweep_start) / sweep_step) + 1;
+        printf("Sweep: %.4f to %.4f V, step %.4f (%d points)\n",
+               sweep_start, sweep_end, sweep_step, num_steps);
+
+        for (int i = 0; i < num_steps; i++) {
+            double V = sweep_start + i * sweep_step;
+
+            // Apply bias to contact 0 (left contact)
+            environment.put_value(CONTACT, APPLIED_BIAS, V, 0);
+            environment.solve();
+
+            if (error_handler.fail()) {
+                fprintf(stderr, "Solve failed at V=%.4f: %s\n",
+                        V, error_handler.get_error_string().c_str());
+                if (csv_fp) fclose(csv_fp);
+                return 1;
+            }
+
+            // Read total current from contact 0
+            double I = environment.get_value(CONTACT, TOTAL_CURRENT, 0);
+            printf("V=%+.4f  I=%.6e A/cm2\n", V, I);
+
+            if (csv_fp)
+                fprintf(csv_fp, "%.6f,%.6e\n", V, I);
+        }
+
+        if (csv_fp) {
+            fclose(csv_fp);
+            printf("CSV written: %s\n", csv_file);
+        }
+    }
+    // --- Single-point solve (original behavior) ---
+    else {
+        printf("Solving...\n");
+        environment.solve();
+
+        if (error_handler.fail()) {
+            fprintf(stderr, "Solve failed: %s\n",
+                    error_handler.get_error_string().c_str());
+            return 1;
+        }
     }
 
-    // 6. Write output state file if requested
+    // Write output state file if requested
     if (output_file) {
         printf("Writing state: %s\n", output_file);
         environment.write_state_file(output_file);
         if (error_handler.fail()) {
             fprintf(stderr, "Write failed: %s\n",
+                    error_handler.get_error_string().c_str());
+            return 1;
+        }
+    }
+
+    // Write spatial profile data if requested
+    if (data_file) {
+        printf("Writing data: %s\n", data_file);
+        TValueFlag write_flags;
+        write_flags.set_write_combo(COMBO_RETURN_ALL);
+        environment.write_data_file(data_file, write_flags);
+        if (error_handler.fail()) {
+            fprintf(stderr, "Data write failed: %s\n",
                     error_handler.get_error_string().c_str());
             return 1;
         }

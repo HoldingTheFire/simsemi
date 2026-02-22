@@ -77,3 +77,45 @@ target_include_directories(simcli PRIVATE
     ${CMAKE_SOURCE_DIR}/Formulc
 )
 target_link_libraries(simcli PRIVATE numeric formulc)
+
+# --- GUI (Dear ImGui + ImPlot + SDL2 + OpenGL) ---
+find_package(SDL2 REQUIRED)
+find_package(OpenGL REQUIRED)
+
+add_executable(simgui
+    gui/main_gui.cpp
+    gui/app.cpp
+    gui/wiofunc_gui.cpp
+    gui/menu.cpp
+    gui/dialogs.cpp
+    gui/plots.cpp
+    gui/device_editor.cpp
+    gui/vendor/imgui/imgui.cpp
+    gui/vendor/imgui/imgui_draw.cpp
+    gui/vendor/imgui/imgui_tables.cpp
+    gui/vendor/imgui/imgui_widgets.cpp
+    gui/vendor/imgui/imgui_demo.cpp
+    gui/vendor/imgui_backends/imgui_impl_sdl2.cpp
+    gui/vendor/imgui_backends/imgui_impl_opengl3.cpp
+    gui/vendor/implot/implot.cpp
+    gui/vendor/implot/implot_items.cpp
+)
+target_include_directories(simgui PRIVATE
+    ${CMAKE_SOURCE_DIR}/NUMERIC/INCLUDE
+    ${CMAKE_SOURCE_DIR}/Formulc
+    ${CMAKE_SOURCE_DIR}/gui
+    ${CMAKE_SOURCE_DIR}/gui/vendor/imgui
+    ${CMAKE_SOURCE_DIR}/gui/vendor/imgui_backends
+    ${CMAKE_SOURCE_DIR}/gui/vendor/implot
+    ${CMAKE_SOURCE_DIR}/gui/vendor
+)
+target_link_libraries(simgui PRIVATE numeric formulc SDL2::SDL2main SDL2::SDL2 OpenGL::GL)
+
+if(NOT MSVC)
+    target_compile_options(simgui PRIVATE -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare)
+endif()
+
+# On Windows with MinGW, link as a GUI app (no console window) -- use -mconsole for debugging
+if(MINGW)
+    target_link_options(simgui PRIVATE -mconsole)
+endif()
