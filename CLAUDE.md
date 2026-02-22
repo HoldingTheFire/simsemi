@@ -153,6 +153,56 @@ ninja -j$(nproc)
 - [x] Removed `#define NULL 0` from `simconst.h`, replaced ~84 `NULL` → `nullptr` across NUMERIC codebase
 - [x] Updated all `extern` declarations to match (`const char*` in globfunc.cpp, envclass.cpp, infclass.cpp, parclass.cpp)
 
+### Phase 6 — Feature Parity with Original Manual (Appendix C)
+
+**Reference:** `Thesis/08AppendixC.pdf` — User Manual Version 1.4.2
+
+**Status:** The GUI covers ~70% of the original's features. The gaps below are ordered by impact.
+
+#### Implemented ✓
+
+| Original Feature | Our Implementation |
+|---|---|
+| File\|Open (device + state files) | File > Open Device (*.dev, *.sta) |
+| File\|Save As (state file) | File > Save State |
+| Environment\|Load Material Parameters | Environment > Load Material Parameters |
+| Environment\|Preferences (§8.2.3) | Preferences dialog (14 env params) |
+| Device\|Generate | Device Editor panel with Generate button |
+| Device\|Start Simulation / Stop | F5 / Esc, menu items |
+| Device\|Reset | Device > Reset Device |
+| Device\|Contacts (§8.2.3) | Full contacts dialog (Ohmic/Finite Recomb/Schottky) |
+| Device\|Surfaces | Surfaces dialog (temps, heat sink, conductivity, refractive indices) |
+| Device\|Electrical Models | 23 GRID_* checkboxes dialog |
+| Device\|Thermal Models | Device/grid/env thermal flags dialog |
+| Device\|Device Information | Expanded Device Info dialog |
+| Environment\|Optical Input | Optical input dialog with spectrum editor |
+| Plot\|Band Diagram + 15 other plots | ImPlot-based plot windows |
+| File\|Save (plot data as CSV) | Export CSV button on each plot |
+| Help\|About | About dialog |
+
+#### Missing — High Priority
+
+- [ ] **Plot\|Scale dialog** (§8.2.4): Set min/max for x and y axes, choose linear/log y-axis, y-axis operations (none, -y, abs(y)). Currently ImPlot has built-in zoom/pan but no explicit scale dialog with log/abs options.
+- [ ] **Plot\|Trace Window** (§8.2.4): Mouse-over crosshair showing (x, y) values for the closest data point. ImPlot has hover tooltips but no dedicated trace dialog.
+- [ ] **Voltage Macro / Sweep** (Figure 48: TDialogVoltageMacro, TDialogSelectMacro): Automated voltage sweep from the GUI with configurable start/end/step. The CLI has `-sweep` but the GUI does not expose this. Should log I-V data.
+- [ ] **Data menu** (§8.3.5, Table 7): Export non-position-dependent scalar data (operating point, convergence info) and custom multi-parameter CSV. Original had TDialogSelectOneParameter, TDialogSelectParameters, TDialogDataWriteAll, TDialogWriteBand.
+- [ ] **Laser dialog** (Figure 48: TDialogLaser): Laser-specific parameters for VCSEL simulation. Currently no GUI for viewing/editing laser cavity output power, mode gain, or threshold.
+- [ ] **Plot\|External Optical Spectra** (§8.2.4): Plot the external optical spectrum when optical generation is enabled. Should show incident spectrum intensity vs photon energy/wavelength.
+
+#### Missing — Medium Priority
+
+- [ ] **Plot\|Freeze Plot / Melt Plot** (§8.2.4): Freeze plot data at current state for comparison (e.g., overlay band diagrams at two different biases). Melt to resume live updates.
+- [ ] **File\|Save for device text** (§8.2.5): The device editor has Generate, but no explicit "Save device file to disk" without generating. Should support saving the text buffer back to the `.dev` file.
+- [ ] **Plot\|Auto-Scale** (§8.2.4): Menu item to reset plot axes to automatic range after manual zoom. ImPlot's double-click-to-reset partially covers this.
+
+#### Missing — Low Priority (deferred or not needed)
+
+- [ ] **Edit menu** (Table 7): Cut/copy/paste/find/replace for device editor. ImGui's built-in InputTextMultiline has Ctrl+C/V/X. Find/replace would be a nice addition.
+- [ ] **Window menu** (Table 7): Control layout of windows. ImGui handles window management intrinsically; not needed unless docking is added.
+- [ ] **Multiple simultaneous device files** (§8.2.2): Original allowed editing several .dev files at once with cut/paste between them. Modern UX typically uses one-at-a-time. Low priority.
+- [ ] **Printing** (Figure 47: TPrintEditFilePrintOut, TPlotPrintOut): Print device files and plots. Not needed for modern workflow (use screenshots or CSV export).
+- [ ] **Status bar** (§8.2.1): Help hints, Num/Caps Lock state, cursor line number. Partially covered by the Status panel log.
+
 ---
 
 ## Key Architecture Details
