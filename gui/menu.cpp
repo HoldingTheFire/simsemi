@@ -41,7 +41,6 @@ void SimWindowsApp::render_menu_bar()
                 {"Device Files", "*.dev *.sta",
                  "All Files", "*"}).result();
             if (!sel.empty()) {
-                // Check extension for state vs device file
                 load_device(sel[0].c_str());
             }
         }
@@ -58,7 +57,6 @@ void SimWindowsApp::render_menu_bar()
         ImGui::Separator();
 
         if (ImGui::MenuItem("Quit", "Alt+F4")) {
-            // Signal main loop to exit
             SDL_Event quit_event;
             quit_event.type = SDL_QUIT;
             SDL_PushEvent(&quit_event);
@@ -79,6 +77,10 @@ void SimWindowsApp::render_menu_bar()
         }
 
         ImGui::Separator();
+
+        if (ImGui::MenuItem("Optical Input...", nullptr, false, has_device)) {
+            show_optical_input = true;
+        }
 
         if (ImGui::MenuItem("Preferences...", nullptr, false, true)) {
             show_preferences = true;
@@ -119,6 +121,11 @@ void SimWindowsApp::render_menu_bar()
         if (ImGui::MenuItem("Electrical Models...", nullptr, false, has_device)) {
             show_electrical_models = true;
         }
+        if (ImGui::MenuItem("Thermal Models...", nullptr, false, has_device)) {
+            show_thermal_models = true;
+        }
+
+        ImGui::Separator();
 
         if (ImGui::MenuItem("Device Info...", nullptr, false, device_loaded)) {
             show_device_info = true;

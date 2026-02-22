@@ -64,6 +64,8 @@ struct SimWindowsApp {
     bool show_contacts = false;
     bool show_surfaces = false;
     bool show_electrical_models = false;
+    bool show_thermal_models = false;
+    bool show_optical_input = false;
     bool show_preferences = false;
     bool show_device_info = false;
 

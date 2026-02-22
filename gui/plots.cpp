@@ -9,10 +9,14 @@
 */
 
 #include "comincl.h"
+#undef UCHAR
+
 #include "imgui.h"
 #include "implot.h"
 #include "app.h"
+#include "portable-file-dialogs.h"
 #include <vector>
+#include <fstream>
 
 extern TEnvironment environment;
 
@@ -51,6 +55,48 @@ void SimWindowsApp::render_plots()
         std::vector<double> y(num_nodes);
         for (int i = 0; i < num_nodes; i++) {
             y[i] = environment.get_value(pw.y_flag_type, pw.y_flag, i);
+        }
+
+        // Export CSV button
+        if (ImGui::Button("Export CSV")) {
+            std::string default_name = pw.title + ".csv";
+            // Replace spaces with underscores for filename
+            for (auto& c : default_name) {
+                if (c == ' ') c = '_';
+            }
+            auto dest = pfd::save_file("Export Plot Data", default_name,
+                {"CSV Files", "*.csv",
+                 "All Files", "*"}).result();
+            if (!dest.empty()) {
+                std::ofstream ofs(dest);
+                if (ofs.good()) {
+                    // Header
+                    ofs << "Position_um";
+                    if (pw.extra_lines.empty()) {
+                        ofs << "," << pw.title;
+                    } else {
+                        ofs << ",Ec";
+                        for (auto& el : pw.extra_lines)
+                            ofs << "," << el.label;
+                    }
+                    ofs << "\n";
+
+                    // Data
+                    for (int i = 0; i < num_nodes; i++) {
+                        ofs << x[i];
+                        ofs << "," << y[i];
+                        for (auto& el : pw.extra_lines) {
+                            double val = environment.get_value(el.flag_type, el.flag_value, i);
+                            ofs << "," << val;
+                        }
+                        ofs << "\n";
+                    }
+
+                    add_log("Exported: " + dest);
+                } else {
+                    add_log("ERROR: Could not write " + dest);
+                }
+            }
         }
 
         if (ImPlot::BeginPlot(pw.title.c_str(), ImVec2(-1, -1))) {
