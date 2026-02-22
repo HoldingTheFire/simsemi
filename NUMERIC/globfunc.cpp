@@ -883,9 +883,9 @@ string prec_to_string(prec value, int precision, NumberFormat format)
 	char number_string[25];
 	char format_string[5];
 
-	if (format==NORMAL) sprintf(format_string,"%%.%dlf",precision);
-	else sprintf(format_string,"%%.%dle",precision);
-	sprintf(number_string,format_string,value);
+	if (format==NORMAL) snprintf(format_string,sizeof(format_string),"%%.%dlf",precision);
+	else snprintf(format_string,sizeof(format_string),"%%.%dle",precision);
+	snprintf(number_string,sizeof(number_string),format_string,value);
 	result=number_string;
 	return(result);
 }
@@ -894,7 +894,7 @@ string int_to_string(int value)
 {
 	string result;
 	char number_string[25];
-	sprintf(number_string,"%d",value);
+	snprintf(number_string,sizeof(number_string),"%d",value);
 	result=number_string;
 	return(result);
 }

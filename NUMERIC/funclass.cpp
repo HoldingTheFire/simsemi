@@ -142,13 +142,15 @@ private:
 TUserFunction::TUserFunction(string new_function_string, string new_variables)
 	: TFunction(USER_FUNCTION,(short)strlen(new_variables.c_str()))
 {
-	function_string=new char[strlen(new_function_string.c_str())+1];
-	strcpy(function_string,new_function_string.c_str());
+	size_t func_len=strlen(new_function_string.c_str())+1;
+	function_string=new char[func_len];
+	strncpy(function_string,new_function_string.c_str(),func_len);
 	std::transform(function_string, function_string + strlen(function_string),
 	               function_string, ::tolower);
 
-	variable_string=new char[strlen(new_variables.c_str())+1];
-	strcpy(variable_string,new_variables.c_str());
+	size_t var_len=strlen(new_variables.c_str())+1;
+	variable_string=new char[var_len];
+	strncpy(variable_string,new_variables.c_str(),var_len);
 	std::transform(variable_string, variable_string + strlen(variable_string),
 	               variable_string, ::tolower);
 
@@ -160,11 +162,13 @@ TUserFunction::TUserFunction(string new_function_string, string new_variables)
 TUserFunction::TUserFunction(const TUserFunction& new_user_function)
 	: TFunction(new_user_function)
 {
-	function_string=new char[strlen(new_user_function.function_string)+1];
-	variable_string=new char[strlen(new_user_function.variable_string)+1];
+	size_t func_len=strlen(new_user_function.function_string)+1;
+	size_t var_len=strlen(new_user_function.variable_string)+1;
+	function_string=new char[func_len];
+	variable_string=new char[var_len];
 
-	strcpy(function_string,new_user_function.function_string);
-	strcpy(variable_string,new_user_function.variable_string);
+	strncpy(function_string,new_user_function.function_string,func_len);
+	strncpy(variable_string,new_user_function.variable_string,var_len);
 
 	translate_error=new_user_function.translate_error;
 	if (fnot_empty(new_user_function.function)) translate();
@@ -204,7 +208,7 @@ void TUserFunction::function_fix_up(void)
 			start_search++;
 		}
 	}
-	strcpy(function_string,temp_string.c_str());
+	strncpy(function_string,temp_string.c_str(),strlen(function_string)+1);
 }
 
 void TUserFunction::read_contents(FILE *file_ptr)
