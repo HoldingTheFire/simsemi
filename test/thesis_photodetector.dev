@@ -1,7 +1,20 @@
 # Thesis Appendix A, Test 2 - Short Circuit Current (Listing 9)
-# GaAs pn photodetector: 1.0 micron, Na=1e17, Nd=3e17
-# Illuminated from left with 100 mW/cm2 at 2.0 eV, 0.45-0.55 um only
-# Reference: Jsc = 12.1 mA/cm2 (analytical: 11.6 mA/cm2, 4% error)
+# GaAs pn photodetector: 1.0 cm total length, p-side Na=1e17 cm-3, n-side Nd=3e17 cm-3
+# p-region: 0 to 0.5 cm (Na=1e17), n-region: 0.5 to 1.0 cm (Nd=3e17)
+#
+# NOTE: Lengths are in cm (NUMERIC internal units), not microns.
+#
+# OPTICAL SETUP - configure via GUI (Environment > Optical Input):
+#   - Enable "Enable Optical Generation" checkbox
+#   - Add spectral component: Photon Energy = 2.0 eV, Intensity = 0.1 W/cm2
+#     (corresponds to 100 mW/cm2 at 620.7 nm wavelength, above GaAs bandgap ~1.42 eV)
+#   - Alternatively: load the companion spectrum file test/gaas_photodetector.spc
+#   - "Left-side Incident Light" and "Spectrum Over Entire Device" are on by default
+# After configuring optical input, run Simulate (Device > Start Simulation / F5).
+#
+# Expected result (thesis reference):
+#   Jsc = 12.1 mA/cm2  (short-circuit photocurrent)
+#   Analytical estimate: 11.6 mA/cm2  (~4% error, acceptable)
 
 grid length=.45 points=100
 grid length=.1 points=200
@@ -11,3 +24,5 @@ structure length=1.00 material=gaas
 
 doping length=.5 Na=1e17
 doping length=.5 Nd=3e17
+
+region length=1.00 bulk

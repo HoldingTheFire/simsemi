@@ -119,11 +119,115 @@ int main(int argc, char* argv[])
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
-    // Style
-    ImGui::StyleColorsDark();
+    // Style: classic Windows 95/98/2000 look
+    ImGui::StyleColorsLight();
     ImGuiStyle& style = ImGui::GetStyle();
-    style.WindowRounding = 4.0f;
-    style.FrameRounding = 2.0f;
+
+    // Boxy, no rounding — classic Win32 look
+    style.WindowRounding    = 0.0f;
+    style.FrameRounding     = 0.0f;
+    style.ScrollbarRounding = 0.0f;
+    style.GrabRounding      = 0.0f;
+    style.TabRounding       = 0.0f;
+    style.ChildRounding     = 0.0f;
+    style.PopupRounding     = 0.0f;
+
+    // Slightly thicker window border
+    style.WindowBorderSize  = 1.0f;
+    style.FrameBorderSize   = 1.0f;
+
+    ImVec4* colors = style.Colors;
+
+    // Window background: light gray (classic dialog box color)
+    colors[ImGuiCol_WindowBg]          = ImVec4(0.933f, 0.933f, 0.933f, 1.00f);
+    colors[ImGuiCol_ChildBg]           = ImVec4(0.933f, 0.933f, 0.933f, 1.00f);
+    colors[ImGuiCol_PopupBg]           = ImVec4(0.933f, 0.933f, 0.933f, 1.00f);
+
+    // Title bar: classic Windows blue when active, gray when inactive
+    colors[ImGuiCol_TitleBg]           = ImVec4(0.502f, 0.502f, 0.502f, 1.00f);
+    colors[ImGuiCol_TitleBgActive]     = ImVec4(0.000f, 0.000f, 0.502f, 1.00f);
+    colors[ImGuiCol_TitleBgCollapsed]  = ImVec4(0.600f, 0.600f, 0.600f, 1.00f);
+
+    // Menu bar: light gray
+    colors[ImGuiCol_MenuBarBg]         = ImVec4(0.867f, 0.867f, 0.867f, 1.00f);
+
+    // Buttons: classic raised gray
+    colors[ImGuiCol_Button]            = ImVec4(0.827f, 0.827f, 0.827f, 1.00f);
+    colors[ImGuiCol_ButtonHovered]     = ImVec4(0.753f, 0.753f, 0.753f, 1.00f);
+    colors[ImGuiCol_ButtonActive]      = ImVec4(0.502f, 0.502f, 0.502f, 1.00f);
+
+    // Frames (input fields, checkboxes): white background
+    colors[ImGuiCol_FrameBg]           = ImVec4(1.000f, 1.000f, 1.000f, 1.00f);
+    colors[ImGuiCol_FrameBgHovered]    = ImVec4(0.878f, 0.918f, 1.000f, 1.00f);
+    colors[ImGuiCol_FrameBgActive]     = ImVec4(0.757f, 0.839f, 1.000f, 1.00f);
+
+    // Headers (collapsibles, table rows): classic selection blue
+    colors[ImGuiCol_Header]            = ImVec4(0.000f, 0.000f, 0.502f, 0.31f);
+    colors[ImGuiCol_HeaderHovered]     = ImVec4(0.000f, 0.000f, 0.502f, 0.55f);
+    colors[ImGuiCol_HeaderActive]      = ImVec4(0.000f, 0.000f, 0.502f, 1.00f);
+
+    // Selection / text highlight: classic blue
+    colors[ImGuiCol_TextSelectedBg]    = ImVec4(0.000f, 0.000f, 0.502f, 0.35f);
+
+    // Scrollbar
+    colors[ImGuiCol_ScrollbarBg]       = ImVec4(0.867f, 0.867f, 0.867f, 1.00f);
+    colors[ImGuiCol_ScrollbarGrab]     = ImVec4(0.686f, 0.686f, 0.686f, 1.00f);
+    colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.588f, 0.588f, 0.588f, 1.00f);
+    colors[ImGuiCol_ScrollbarGrabActive]  = ImVec4(0.490f, 0.490f, 0.490f, 1.00f);
+
+    // Separator: dark gray line
+    colors[ImGuiCol_Separator]         = ImVec4(0.600f, 0.600f, 0.600f, 1.00f);
+
+    // Tab bar: mimic classic Windows tab control
+    colors[ImGuiCol_Tab]               = ImVec4(0.827f, 0.827f, 0.827f, 1.00f);
+    colors[ImGuiCol_TabHovered]        = ImVec4(0.933f, 0.933f, 0.933f, 1.00f);
+    colors[ImGuiCol_TabActive]         = ImVec4(0.933f, 0.933f, 0.933f, 1.00f);
+    colors[ImGuiCol_TabUnfocused]      = ImVec4(0.827f, 0.827f, 0.827f, 1.00f);
+    colors[ImGuiCol_TabUnfocusedActive]= ImVec4(0.867f, 0.867f, 0.867f, 1.00f);
+
+    // Plot area background: white
+    colors[ImGuiCol_PlotLines]         = ImVec4(0.000f, 0.000f, 0.502f, 1.00f);
+    colors[ImGuiCol_PlotHistogram]     = ImVec4(0.000f, 0.000f, 0.502f, 1.00f);
+
+    // Text: near-black
+    colors[ImGuiCol_Text]              = ImVec4(0.000f, 0.000f, 0.000f, 1.00f);
+    colors[ImGuiCol_TextDisabled]      = ImVec4(0.502f, 0.502f, 0.502f, 1.00f);
+
+    // Font loading: prefer a smooth system TrueType font over the default
+    // bitmap ProggyClean 13px which looks pixelated on modern displays.
+    {
+        // Candidate fonts in priority order
+        const char* font_candidates[] = {
+            // Windows 11 / 10
+            "C:/Windows/Fonts/segoeui.ttf",
+            // Linux (DejaVu Sans, common on Ubuntu/Debian/Fedora)
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            "/usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf",
+            // macOS
+            "/System/Library/Fonts/SFNS.ttf",
+            "/System/Library/Fonts/Helvetica.ttc",
+            nullptr
+        };
+
+        bool font_loaded = false;
+        for (int i = 0; font_candidates[i] != nullptr; ++i) {
+            if (std::filesystem::exists(font_candidates[i])) {
+                ImFontConfig cfg;
+                cfg.OversampleH = 2;
+                cfg.OversampleV = 2;
+                cfg.PixelSnapH  = false;
+                io.Fonts->AddFontFromFileTTF(font_candidates[i], 16.0f, &cfg);
+                font_loaded = true;
+                fprintf(stdout, "Loaded font: %s\n", font_candidates[i]);
+                break;
+            }
+        }
+        if (!font_loaded) {
+            // Fall back to the built-in bitmap font
+            io.Fonts->AddFontDefault();
+            fprintf(stdout, "No system font found; using ImGui default bitmap font.\n");
+        }
+    }
 
     // Setup backends
     const char* glsl_version = "#version 130";
@@ -197,7 +301,7 @@ int main(int argc, char* argv[])
         int display_w, display_h;
         SDL_GL_GetDrawableSize(window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(0.933f, 0.933f, 0.933f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

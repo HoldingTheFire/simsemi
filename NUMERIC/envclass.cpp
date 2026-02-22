@@ -1177,6 +1177,14 @@ void TEnvironment::effects_change_to_compute_flags(void)
 
 //GRID_OPTICAL_GEN
 		if (effects_change_flags.is_set(GRID_ELECTRICAL,GRID_OPTICAL_GEN)) {
+			// When optical generation flag changes, trigger recomputation of per-node
+			// optical generation values so comp_total_recombination() gets correct
+			// opt_gen data. Without this, opt_gen stays 0 and no photocurrent appears.
+			recompute_flags.set(NODE,OPTICAL_GENERATION);
+			update_flags.set(NODE,OPTICAL_GENERATION);
+			update_flags.set(NODE,OPTICAL_GENERATION_HEAT);
+			update_flags.set(ELECTRON,OPTICAL_GENERATION_KIN);
+			update_flags.set(HOLE,OPTICAL_GENERATION_KIN);
 			recompute_flags.set(NODE,TOTAL_RECOMB);
 			update_flags.set(NODE,TOTAL_RECOMB);
 			recompute_flags.set(ELECTRON,TOTAL_HEAT);

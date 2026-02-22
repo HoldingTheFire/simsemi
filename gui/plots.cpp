@@ -51,11 +51,30 @@ void SimWindowsApp::render_plots()
             continue;
         }
 
-        // Get primary data
+        // Get primary data (Ec for band diagram)
         std::vector<double> y(num_nodes);
         for (int i = 0; i < num_nodes; i++) {
             y[i] = environment.get_value(pw.y_flag_type, pw.y_flag, i);
         }
+
+        // Helper: get extra line value at node i, applying band-edge offset
+        // for quasi-Fermi levels (which are stored relative to band edges).
+        // From the original NUMERIC code (devclass.cpp):
+        //   Efn = Ec(i) - QUASI_FERMI_electron(i)
+        //   Efp = Ev(i) + QUASI_FERMI_hole(i)
+        auto get_extra_value = [&](const PlotWindow::ExtraLine& el, int i) -> double {
+            if (el.flag_value == QUASI_FERMI) {
+                double qf = environment.get_value(el.flag_type, QUASI_FERMI, i);
+                if (el.flag_type == ELECTRON) {
+                    double ec = environment.get_value(ELECTRON, BAND_EDGE, i);
+                    return ec - qf;
+                } else if (el.flag_type == HOLE) {
+                    double ev = environment.get_value(HOLE, BAND_EDGE, i);
+                    return ev + qf;
+                }
+            }
+            return environment.get_value(el.flag_type, el.flag_value, i);
+        };
 
         // Export CSV button
         if (ImGui::Button("Export CSV")) {
@@ -86,8 +105,7 @@ void SimWindowsApp::render_plots()
                         ofs << x[i];
                         ofs << "," << y[i];
                         for (auto& el : pw.extra_lines) {
-                            double val = environment.get_value(el.flag_type, el.flag_value, i);
-                            ofs << "," << val;
+                            ofs << "," << get_extra_value(el, i);
                         }
                         ofs << "\n";
                     }
@@ -115,7 +133,7 @@ void SimWindowsApp::render_plots()
                 for (auto& el : pw.extra_lines) {
                     std::vector<double> ey(num_nodes);
                     for (int i = 0; i < num_nodes; i++) {
-                        ey[i] = environment.get_value(el.flag_type, el.flag_value, i);
+                        ey[i] = get_extra_value(el, i);
                     }
                     ImPlot::PlotLine(el.label.c_str(), x.data(), ey.data(), num_nodes);
                 }

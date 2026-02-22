@@ -254,143 +254,139 @@ void SimWindowsApp::render_dialogs()
     }
 
     // =====================================================================
-    // Electrical Models (full)
+    // Electrical Models (full) -- regular window, opened/closed via show flag
     // =====================================================================
     if (show_electrical_models) {
-        ImGui::OpenPopup("Electrical Models");
-        show_electrical_models = false;
-    }
-    if (ImGui::BeginPopupModal("Electrical Models", nullptr,
-                                ImGuiWindowFlags_AlwaysAutoResize)) {
-        // Grid effects apply to all grid elements
-        flag effects = (flag)environment.get_value(GRID_ELECTRICAL, EFFECTS, 0);
-        flag old_effects = effects;
+        ImGui::SetNextWindowSize(ImVec2(420, 0), ImGuiCond_FirstUseEver);
+        if (ImGui::Begin("Electrical Models", &show_electrical_models,
+                          ImGuiWindowFlags_AlwaysAutoResize)) {
+            // Grid effects apply to all grid elements
+            flag effects = (flag)environment.get_value(GRID_ELECTRICAL, EFFECTS, 0);
+            flag old_effects = effects;
 
-        ImGui::Text("Recombination:");
-        flag_checkbox("SHR Recombination", effects, GRID_RECOMB_SHR);
-        flag_checkbox("Band-to-Band Recombination", effects, GRID_RECOMB_B_B);
-        flag_checkbox("Auger Recombination", effects, GRID_RECOMB_AUGER);
-        flag_checkbox("Stimulated Recombination", effects, GRID_RECOMB_STIM);
+            ImGui::Text("Recombination:");
+            flag_checkbox("SHR Recombination", effects, GRID_RECOMB_SHR);
+            flag_checkbox("Band-to-Band Recombination", effects, GRID_RECOMB_B_B);
+            flag_checkbox("Auger Recombination", effects, GRID_RECOMB_AUGER);
+            flag_checkbox("Stimulated Recombination", effects, GRID_RECOMB_STIM);
 
-        ImGui::Separator();
-        ImGui::Text("Statistics & Quantum:");
-        flag_checkbox("Fermi-Dirac Statistics", effects, GRID_FERMI_DIRAC);
-        flag_checkbox("QW Free Carriers", effects, GRID_QW_FREE_CARR);
-        flag_checkbox("Bandgap Narrowing", effects, GRID_BAND_NARROWING);
-        flag_checkbox("Incomplete Ionization", effects, GRID_INCOMPLETE_IONIZATION);
+            ImGui::Separator();
+            ImGui::Text("Statistics & Quantum:");
+            flag_checkbox("Fermi-Dirac Statistics", effects, GRID_FERMI_DIRAC);
+            flag_checkbox("QW Free Carriers", effects, GRID_QW_FREE_CARR);
+            flag_checkbox("Bandgap Narrowing", effects, GRID_BAND_NARROWING);
+            flag_checkbox("Incomplete Ionization", effects, GRID_INCOMPLETE_IONIZATION);
 
-        ImGui::Separator();
-        ImGui::Text("Transport:");
-        flag_checkbox("Thermionic Emission", effects, GRID_THERMIONIC);
-        flag_checkbox("Tunneling", effects, GRID_TUNNELING);
-        flag_checkbox("Temperature-Dependent Mobility", effects, GRID_TEMP_MOBILITY);
-        flag_checkbox("Doping-Dependent Mobility", effects, GRID_DOPING_MOBILITY);
+            ImGui::Separator();
+            ImGui::Text("Transport:");
+            flag_checkbox("Thermionic Emission", effects, GRID_THERMIONIC);
+            flag_checkbox("Tunneling", effects, GRID_TUNNELING);
+            flag_checkbox("Temperature-Dependent Mobility", effects, GRID_TEMP_MOBILITY);
+            flag_checkbox("Doping-Dependent Mobility", effects, GRID_DOPING_MOBILITY);
 
-        ImGui::Separator();
-        ImGui::Text("Optical:");
-        flag_checkbox("Optical Generation", effects, GRID_OPTICAL_GEN);
-        flag_checkbox("Incident Reflection", effects, GRID_INCIDENT_REFLECTION);
+            ImGui::Separator();
+            ImGui::Text("Optical:");
+            flag_checkbox("Optical Generation", effects, GRID_OPTICAL_GEN);
+            flag_checkbox("Incident Reflection", effects, GRID_INCIDENT_REFLECTION);
 
-        ImGui::Separator();
-        ImGui::Text("Material:");
-        flag_checkbox("Temp-Dependent Electron Affinity", effects, GRID_TEMP_ELECTRON_AFFINITY);
-        flag_checkbox("Abrupt Material Boundaries", effects, GRID_ABRUPT_MATERIALS);
-        flag_checkbox("Carrier Relaxation", effects, GRID_RELAX);
-        flag_checkbox("Temp-Dependent Mode Permittivity", effects, GRID_TEMP_MODE_PERM);
-        flag_checkbox("Temp-Dependent Incident Permittivity", effects, GRID_TEMP_INC_PERM);
+            ImGui::Separator();
+            ImGui::Text("Material:");
+            flag_checkbox("Temp-Dependent Electron Affinity", effects, GRID_TEMP_ELECTRON_AFFINITY);
+            flag_checkbox("Abrupt Material Boundaries", effects, GRID_ABRUPT_MATERIALS);
+            flag_checkbox("Carrier Relaxation", effects, GRID_RELAX);
+            flag_checkbox("Temp-Dependent Mode Permittivity", effects, GRID_TEMP_MODE_PERM);
+            flag_checkbox("Temp-Dependent Incident Permittivity", effects, GRID_TEMP_INC_PERM);
 
-        ImGui::Separator();
+            ImGui::Separator();
 
-        if (ImGui::Button("Apply", ImVec2(120, 0))) {
-            if (effects != old_effects) {
-                environment.put_value(GRID_ELECTRICAL, EFFECTS, (prec)effects);
-                environment.process_recompute_flags();
+            if (ImGui::Button("Apply", ImVec2(120, 0))) {
+                if (effects != old_effects) {
+                    environment.put_value(GRID_ELECTRICAL, EFFECTS, (prec)effects);
+                    environment.process_recompute_flags();
+                }
+                show_electrical_models = false;
             }
-            ImGui::CloseCurrentPopup();
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(120, 0)))
+                show_electrical_models = false;
         }
-        ImGui::SameLine();
-        if (ImGui::Button("Cancel", ImVec2(120, 0)))
-            ImGui::CloseCurrentPopup();
-
-        ImGui::EndPopup();
+        ImGui::End();
     }
 
     // =====================================================================
-    // Thermal Models
+    // Thermal Models -- regular window, opened/closed via show flag
     // =====================================================================
     if (show_thermal_models) {
-        ImGui::OpenPopup("Thermal Models");
-        show_thermal_models = false;
-    }
-    if (ImGui::BeginPopupModal("Thermal Models", nullptr,
-                                ImGuiWindowFlags_AlwaysAutoResize)) {
-        // Device-level thermal flags
-        flag dev_effects = (flag)environment.get_value(DEVICE, EFFECTS, 0);
-        flag old_dev = dev_effects;
+        ImGui::SetNextWindowSize(ImVec2(420, 0), ImGuiCond_FirstUseEver);
+        if (ImGui::Begin("Thermal Models", &show_thermal_models,
+                          ImGuiWindowFlags_AlwaysAutoResize)) {
+            // Device-level thermal flags
+            flag dev_effects = (flag)environment.get_value(DEVICE, EFFECTS, 0);
+            flag old_dev = dev_effects;
 
-        ImGui::Text("Device Temperature Model:");
-        flag_checkbox("Non-Isothermal", dev_effects, DEVICE_NON_ISOTHERMAL);
-        flag_checkbox("Single Temperature", dev_effects, DEVICE_SINGLE_TEMP);
-        flag_checkbox("Vary Lattice Temperature", dev_effects, DEVICE_VARY_LATTICE_TEMP);
-        flag_checkbox("Vary Electron Temperature", dev_effects, DEVICE_VARY_ELECTRON_TEMP);
-        flag_checkbox("Vary Hole Temperature", dev_effects, DEVICE_VARY_HOLE_TEMP);
+            ImGui::Text("Device Temperature Model:");
+            flag_checkbox("Non-Isothermal", dev_effects, DEVICE_NON_ISOTHERMAL);
+            flag_checkbox("Single Temperature", dev_effects, DEVICE_SINGLE_TEMP);
+            flag_checkbox("Vary Lattice Temperature", dev_effects, DEVICE_VARY_LATTICE_TEMP);
+            flag_checkbox("Vary Electron Temperature", dev_effects, DEVICE_VARY_ELECTRON_TEMP);
+            flag_checkbox("Vary Hole Temperature", dev_effects, DEVICE_VARY_HOLE_TEMP);
 
-        ImGui::Separator();
+            ImGui::Separator();
 
-        // Grid-level thermal flags
-        flag grid_effects = (flag)environment.get_value(GRID_ELECTRICAL, EFFECTS, 0);
-        flag old_grid = grid_effects;
+            // Grid-level thermal flags
+            flag grid_effects = (flag)environment.get_value(GRID_ELECTRICAL, EFFECTS, 0);
+            flag old_grid = grid_effects;
 
-        ImGui::Text("Thermal Effects:");
-        flag_checkbox("Temp-Dependent Thermal Conductivity", grid_effects, GRID_TEMP_THERMAL_COND);
-        flag_checkbox("Lateral Heat Flow", grid_effects, GRID_LATERAL_HEAT);
-        flag_checkbox("Joule Heating", grid_effects, GRID_JOULE_HEAT);
-        flag_checkbox("Thermoelectric Heating", grid_effects, GRID_THERMOELECTRIC_HEAT);
+            ImGui::Text("Thermal Effects:");
+            flag_checkbox("Temp-Dependent Thermal Conductivity", grid_effects, GRID_TEMP_THERMAL_COND);
+            flag_checkbox("Lateral Heat Flow", grid_effects, GRID_LATERAL_HEAT);
+            flag_checkbox("Joule Heating", grid_effects, GRID_JOULE_HEAT);
+            flag_checkbox("Thermoelectric Heating", grid_effects, GRID_THERMOELECTRIC_HEAT);
 
-        ImGui::Separator();
+            ImGui::Separator();
 
-        // Environment temperature clamping
-        flag env_effects = (flag)environment.get_value(ENVIRONMENT, EFFECTS, 0);
-        flag old_env = env_effects;
-        flag_checkbox("Clamp Temperature", env_effects, ENV_CLAMP_TEMPERATURE);
+            // Environment temperature clamping
+            flag env_effects = (flag)environment.get_value(ENVIRONMENT, EFFECTS, 0);
+            flag old_env = env_effects;
+            flag_checkbox("Clamp Temperature", env_effects, ENV_CLAMP_TEMPERATURE);
 
-        if (env_effects & ENV_CLAMP_TEMPERATURE) {
-            float temp_clamp = (float)environment.get_value(ENVIRONMENT, TEMP_CLAMP_VALUE);
-            if (ImGui::InputFloat("Temperature Clamp (K)", &temp_clamp, 1.0f, 10.0f, "%.1f")) {
-                environment.put_value(ENVIRONMENT, TEMP_CLAMP_VALUE, (prec)temp_clamp);
+            if (env_effects & ENV_CLAMP_TEMPERATURE) {
+                float temp_clamp = (float)environment.get_value(ENVIRONMENT, TEMP_CLAMP_VALUE);
+                if (ImGui::InputFloat("Temperature Clamp (K)", &temp_clamp, 1.0f, 10.0f, "%.1f")) {
+                    environment.put_value(ENVIRONMENT, TEMP_CLAMP_VALUE, (prec)temp_clamp);
+                }
+
+                float temp_relax = (float)environment.get_value(ENVIRONMENT, TEMP_RELAX_VALUE);
+                if (ImGui::InputFloat("Temperature Relaxation", &temp_relax, 0.01f, 0.1f, "%.3f")) {
+                    environment.put_value(ENVIRONMENT, TEMP_RELAX_VALUE, (prec)temp_relax);
+                }
             }
 
-            float temp_relax = (float)environment.get_value(ENVIRONMENT, TEMP_RELAX_VALUE);
-            if (ImGui::InputFloat("Temperature Relaxation", &temp_relax, 0.01f, 0.1f, "%.3f")) {
-                environment.put_value(ENVIRONMENT, TEMP_RELAX_VALUE, (prec)temp_relax);
+            ImGui::Separator();
+
+            if (ImGui::Button("Apply", ImVec2(120, 0))) {
+                bool any_changed = false;
+                if (dev_effects != old_dev) {
+                    environment.put_value(DEVICE, EFFECTS, (prec)dev_effects);
+                    any_changed = true;
+                }
+                if (grid_effects != old_grid) {
+                    environment.put_value(GRID_ELECTRICAL, EFFECTS, (prec)grid_effects);
+                    any_changed = true;
+                }
+                if (env_effects != old_env) {
+                    environment.put_value(ENVIRONMENT, EFFECTS, (prec)env_effects);
+                    any_changed = true;
+                }
+                if (any_changed)
+                    environment.process_recompute_flags();
+                show_thermal_models = false;
             }
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(120, 0)))
+                show_thermal_models = false;
         }
-
-        ImGui::Separator();
-
-        if (ImGui::Button("Apply", ImVec2(120, 0))) {
-            bool any_changed = false;
-            if (dev_effects != old_dev) {
-                environment.put_value(DEVICE, EFFECTS, (prec)dev_effects);
-                any_changed = true;
-            }
-            if (grid_effects != old_grid) {
-                environment.put_value(GRID_ELECTRICAL, EFFECTS, (prec)grid_effects);
-                any_changed = true;
-            }
-            if (env_effects != old_env) {
-                environment.put_value(ENVIRONMENT, EFFECTS, (prec)env_effects);
-                any_changed = true;
-            }
-            if (any_changed)
-                environment.process_recompute_flags();
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Cancel", ImVec2(120, 0)))
-            ImGui::CloseCurrentPopup();
-
-        ImGui::EndPopup();
+        ImGui::End();
     }
 
     // =====================================================================
@@ -482,10 +478,23 @@ void SimWindowsApp::render_dialogs()
         ImGui::Separator();
 
         if (ImGui::Button("Apply", ImVec2(120, 0))) {
-            if (env_effects != old_env) {
+            bool effects_changed = (env_effects != old_env);
+            if (effects_changed) {
                 environment.put_value(ENVIRONMENT, EFFECTS, (prec)env_effects);
             }
             environment.process_recompute_flags();
+            // Inform user about optical generation status
+            int num_spec_now = environment.get_number_objects(SPECTRUM);
+            if (env_effects & ENV_OPTICAL_GEN) {
+                if (num_spec_now == 0) {
+                    app.add_log("WARNING: Optical generation enabled but no spectral components defined.");
+                    app.add_log("  Add a spectral component (photon energy + intensity), then re-simulate.");
+                } else {
+                    app.add_log("Optical input applied. Re-run simulation (F5) to compute photocurrent.");
+                }
+            } else if (effects_changed) {
+                app.add_log("Optical generation disabled. Re-run simulation (F5) to update.");
+            }
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
