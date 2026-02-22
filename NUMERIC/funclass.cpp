@@ -144,11 +144,13 @@ TUserFunction::TUserFunction(string new_function_string, string new_variables)
 {
 	function_string=new char[strlen(new_function_string.c_str())+1];
 	strcpy(function_string,new_function_string.c_str());
-	strlwr(function_string);
+	std::transform(function_string, function_string + strlen(function_string),
+	               function_string, ::tolower);
 
 	variable_string=new char[strlen(new_variables.c_str())+1];
 	strcpy(variable_string,new_variables.c_str());
-	strlwr(variable_string);
+	std::transform(variable_string, variable_string + strlen(variable_string),
+	               variable_string, ::tolower);
 
 	translate_error=-1;
 

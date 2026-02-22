@@ -66,3 +66,14 @@ endif()
 if(NOT MSVC)
     target_link_libraries(numeric PUBLIC stdc++fs)
 endif()
+
+# --- CLI (headless simulation driver) ---
+add_executable(simcli
+    cli/main.cpp
+    cli/wiofunc_cli.cpp
+)
+target_include_directories(simcli PRIVATE
+    ${CMAKE_SOURCE_DIR}/NUMERIC/INCLUDE
+    ${CMAKE_SOURCE_DIR}/Formulc
+)
+target_link_libraries(simcli PRIVATE numeric formulc)
