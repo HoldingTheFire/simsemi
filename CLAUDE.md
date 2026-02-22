@@ -93,22 +93,46 @@ ninja -j$(nproc)
 - [x] Enable warnings (`-Wall -Wextra`) — remaining warnings are `-Wswitch` (unhandled enum values) and `-Wreorder`, not errors
 - [x] Target: build a static library from `NUMERIC/` + `Formulc/` — done (`libnumeric.a` 1.7MB, `libformulc.a` 21KB) ✓
 
-### Phase 2 — Isolate the Physics Core
-- [ ] Identify all Windows-specific API calls inside `NUMERIC/` (threading, file I/O, etc.) and abstract them behind platform-agnostic wrappers
-- [ ] Replace Windows threading (`CreateThread`, etc.) with `std::thread`
-- [ ] Replace Windows file paths / IO with `std::filesystem`
-- [ ] Ensure `TDevice`, `TEnvironment`, and solvers can be instantiated and run without any GUI dependency
+### Phase 2 — Headless CLI: COMPLETE ✓
 
-### Phase 3 — Replace the GUI Layer
-- [ ] Remove `OWL/` from the build (archive but do not delete)
-- [ ] Choose a cross-platform GUI toolkit (candidates: **Qt6**, **wxWidgets**, **Dear ImGui + SDL**)
-- [ ] Implement a minimal new UI that covers: device editor, simulation runner, results plotter
-- [ ] Wire new UI to the `NUMERIC/` library via a clean API
+**Result:** `simcli.exe` (1.38 MB) links against `libnumeric.a` + `libformulc.a` and runs end-to-end simulations.
 
-### Phase 4 — Validation
-- [ ] Reproduce a known-good simulation result (e.g., a simple p-n junction IV curve) and compare against reference output
-- [ ] Add a CLI/headless mode for running simulations without a GUI (useful for scripting and CI)
+- [x] NUMERIC core has NO Windows API calls, NO OWL dependencies — already portable
+- [x] CLI defines NUMERIC globals, implements WIOFUNC.H callbacks as stdout reporters
+- [x] Voltage sweep (`-sweep`), CSV export (`-csv`), spatial data export (`-data`)
+- [x] End-to-end verified: load materials → load device → solve → write state → reload → re-solve
+
+### Phase 3a — GUI (Minimal Working): COMPLETE ✓
+
+**Result:** `simgui.exe` (10.3 MB) — Dear ImGui + ImPlot + SDL2 + OpenGL3
+
+- [x] Toolkit chosen: Dear ImGui v1.91.8 + ImPlot v0.16 + SDL2 (vendored in `gui/vendor/`)
+- [x] Entry point (`gui/main_gui.cpp`): SDL2/OpenGL init, ImGui main loop
+- [x] WIOFUNC callbacks → thread-safe log buffer displayed in Status panel
+- [x] Menu bar: File (Open/Save), Environment (Load Material, Preferences), Device (Generate/Simulate/Stop/Reset/Contacts/Info), Plot (16 types), Help
+- [x] Background solver thread with F5 start / Esc stop
+- [x] ImPlot-based plot windows: band diagram (Ec/Ev/Efn/Efp), carrier concentrations, currents, fields, doping, recombination, etc.
+- [x] Device text editor panel with Generate button
+- [x] Native file dialogs via portable-file-dialogs
+
+### Phase 3b — GUI (Full Feature Parity)
+- [ ] Full contacts dialog: edit bias, ohmic/Schottky selection, recomb velocity, barrier height with put_value() + process_recompute_flags()
+- [ ] Electrical models dialog: checkboxes for SHR, B-B, Auger, stimulated recomb, Fermi-Dirac, etc. via effect flags
+- [ ] Thermal models dialog: lattice/electron/hole temp variation, joule heat, thermoelectric
+- [ ] Optical input dialog: enable/disable, photon energy, intensity, load spectrum
+- [ ] Surfaces dialog: temperature editing, heat sink toggle
+- [ ] Full preferences dialog: all clamp values, relaxation values, mode errors
+- [ ] Environment menu: temperature, radius, optical settings
+- [ ] Export plot data to CSV from plot windows
+- [ ] Dockable window layout (ImGui docking branch or manual layout)
+
+### Phase 4 — Validation & Polish
+- [x] Reproduce known-good simulation (p-n junction converges in 4 iterations) ✓
+- [x] CLI/headless mode for scripting ✓
+- [ ] Compare IV curves against reference data from thesis
 - [ ] Write a basic test harness around `TDevice` solve cycles
+- [ ] Linux cross-compilation (rename UPPERCASE.H headers, test GCC/Clang on Linux)
+- [ ] Package as portable binary (bundle SDL2 DLL, material.prm)
 
 ---
 
