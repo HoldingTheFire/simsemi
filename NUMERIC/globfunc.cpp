@@ -21,24 +21,6 @@
 //*********************************** Global Functions *****************************************
 
 /***********************************************************************************************
-_matherr - Borland-specific math error handler. Not available on modern compilers.
-Replaced by standard C++ math error handling (errno / fetestexcept).
-*/
-
-#if defined(__BORLANDC__)
-int _matherr(exception *new_error)
-{
-	error_handler.set_error(ERROR_SIMULATION,0,"","");
-	new_error->retval=0.0;
-#ifdef NDEBUG
-	return(1);
-#else
-	return(0);
-#endif
-}
-#endif
-
-/***********************************************************************************************
 void convert_mantissa_exp(float& mantissa, int& exponent)
 	Takes a number of the form mantissa*2^exponent and converts it to the form
 	mantissa*10^exponent.
