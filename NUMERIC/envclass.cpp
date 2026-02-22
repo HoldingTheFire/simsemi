@@ -442,7 +442,7 @@ void TEnvironment::comp_value(FlagType flag_type, flag flag_value,
 
 void TEnvironment::solve(void)
 {
-	extern char undo_filename[];
+	extern const char undo_filename[];
 	extern char executable_path[];
 
 	if (device()) {
@@ -505,7 +505,7 @@ void TEnvironment::load_file(const char *filename)
 {
 	FileType file_type;
 	FILE *file_ptr;
-	extern char state_string[], state_version_string[];
+	extern const char state_string[], state_version_string[];
 	extern int state_string_size, state_version_string_size;
 	char new_state_string[40], new_state_version_string[40];
 	TParseDevice *device_parser;
@@ -650,7 +650,7 @@ void TEnvironment::write_data_file(const char *filename, TValueFlag write_flags,
 void TEnvironment::write_state_file(const char *filename)
 {
 	int i;
-	extern char state_string[], state_version_string[];
+	extern const char state_string[], state_version_string[];
 	extern int state_string_size, state_version_string_size;
 	FILE *file_ptr;
 	prec energy,intensity_in,intensity_out;

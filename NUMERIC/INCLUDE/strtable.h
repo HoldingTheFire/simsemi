@@ -19,59 +19,59 @@
 #define ENCODE_KEY	5
 
 #ifdef CUSTOM
-const char custom_string[]=
+extern const char custom_string[]=
 "This is an unofficial release\n\
 of SimWindows version 1.5.0.\n\
 Distribution without the\n\
 permission of the CU modeling\n\
 group is prohibited.";
 
-const char about_string[]=
+extern const char about_string[]=
 "Tkp[nofr{x!/#Ysphimhjco$[ftvmto\n\
 Fsuztlkmu\"�$6:;706:;<$gz\"Ge{jf#[3!Ylrxuqq\n\
 Fmn#vnhjww%sgviwwgg\n\n\
 Xge$Ubih>%xyz1tdu1gtmqueip0hhz0Ulq\\jpgs|t1vmrxkq2muoo\n\
 Jnclp%cwjw%uq=$ibxlhdxkqwyppCfnhhrsy/erq";
 
-const char state_version_string[]="v.1.5.0";
+extern const char state_version_string[]="v.1.5.0";
 
 #else
-const char about_string[]=
+extern const char about_string[]=
 "Tkp[nofr{x!/#Zjsulss!31931\n\
 Fsuztlkmu\"�$6:;706:;<$gz\"Ge{jf#[3!Ylrxuqq\n\
 Fmn#vnhjww%sgviwwgg\n\n\
 Xge$Ubih>%xyz1tdu1gtmqueip0hhz0Ulq\\jpgs|t1vmrxkq2muoo\n\
 Jnclp%cwjw%uq=$ibxlhdxkqwyppCfnhhrsy/erq";
 
-const char state_version_string[]="v.1.5.0";
+extern const char state_version_string[]="v.1.5.0";
 #endif
 
-const char update_string[]="Last Updated:\n"__DATE__" at "__TIME__;
+extern const char update_string[]="Last Updated:\n"__DATE__" at "__TIME__;
 
-const char state_string[]="State_File";
+extern const char state_string[]="State_File";
 
-const char undo_filename[]="simundo.tmp";
-const char ini_filename[]="simwin.ini";
+extern const char undo_filename[]="simundo.tmp";
+extern const char ini_filename[]="simwin.ini";
 
 int state_string_size=sizeof(state_string);
 int state_version_string_size=sizeof(state_version_string);
 
 #ifdef _SIMWINDOWS_32
-const char application_string[]="SimWindows32";
-const char executable_string[]="simwin32.exe";
-const char cap_executable_string[]="SIMWIN32.EXE";
+extern const char application_string[]="SimWindows32";
+extern const char executable_string[]="simwin32.exe";
+extern const char cap_executable_string[]="SIMWIN32.EXE";
 #endif
 
 #ifdef _SIMWINDOWS_DB
-const char application_string[]="SimWindows32 Debug";
-const char executable_string[]="simwindb.exe";
-const char cap_executable_string[]="SIMWINDB.EXE";
+extern const char application_string[]="SimWindows32 Debug";
+extern const char executable_string[]="simwindb.exe";
+extern const char cap_executable_string[]="SIMWINDB.EXE";
 #endif
 
 char executable_path[MAXPATH];
 
 #ifndef NDEBUG
-const char debug_string[]="This is a debug version\n\
+extern const char debug_string[]="This is a debug version\n\
 of SimWindows\n\n\
 It contains code which will\n\
 affect performance";
@@ -82,7 +82,7 @@ affect performance";
 	MAT_xxx define constants
 */
 
-const char *material_parameters_strings[]={
+extern const char *material_parameters_strings[]={
 	"BAND_GAP",
 	"ELECTRON_AFFINITY",
 	"STATIC_PERMITIVITY",
@@ -110,7 +110,7 @@ const char *material_parameters_strings[]={
 	"HOLE_COLLISION_FACTOR"
 };
 
-const char *material_parameters_variables[]={
+extern const char *material_parameters_variables[]={
 	"XT",
 	"XT",
 	"X",
@@ -141,7 +141,7 @@ const char *material_parameters_variables[]={
 
 //***************************** Free Electron Strings ******************************************
 
-const char *free_electron_long_table[]={
+extern const char *free_electron_long_table[]={
 	"Electron Density of States, Non-Equilibrium (cm-3)",
 	"Electron Density of States, Equilibrium (cm-3)",
 	"Electron Mobility (cm2/Vs)",
@@ -151,7 +151,7 @@ const char *free_electron_long_table[]={
 #endif
 };
 
-const char *free_electron_short_table[]={
+extern const char *free_electron_short_table[]={
 	"Non-Equil n DOS (cm-3)",
 	"Equil n DOS (cm-3)",
 	"n Mobil (cm2/Vs)",
@@ -163,7 +163,7 @@ const char *free_electron_short_table[]={
 
 //********************************* Bound Electron Strings ************************************
 
-const char *bound_electron_long_table[]= {
+extern const char *bound_electron_long_table[]= {
 	"Electron 3D QW Density of States, Non-Equilibrium (cm-3)",
 	"Electron 3D QW Density of States, Equilibrium (cm-3)",
 	"Electron Wave Function",
@@ -174,7 +174,7 @@ const char *bound_electron_long_table[]= {
 #endif
 };
 
-const char *bound_electron_short_table[]= {
+extern const char *bound_electron_short_table[]= {
 	"Non-Equil 3D n QW DOS (cm-3)",
 	"Equil 3D n QW DOS (cm-3)",
 	"n Wave Func",
@@ -187,7 +187,7 @@ const char *bound_electron_short_table[]= {
 
 //********************************** Free Hole Strings ****************************************
 
-const char *free_hole_long_table[]={
+extern const char *free_hole_long_table[]={
 	"Hole Density of States, Non-Equilibrium (cm-3)",
 	"Hole Density of States, Equilibrium (cm-3)",
 	"Hole Mobility (cm2/Vs)",
@@ -197,7 +197,7 @@ const char *free_hole_long_table[]={
 #endif
 };
 
-const char *free_hole_short_table[]={
+extern const char *free_hole_short_table[]={
 	"Non Equil p DOS (cm-3)",
 	"Equil p DOS (cm-3)",
 	"p Mobil (cm2/Vs)",
@@ -209,7 +209,7 @@ const char *free_hole_short_table[]={
 
 //******************************** Bound Hole Strings *****************************************
 
-const char *bound_hole_long_table[]={
+extern const char *bound_hole_long_table[]={
 	"Hole 3D QW Density of States, Non-Equilibrium (cm-3)",
 	"Hole 3D QW Density of States, Equilibrium (cm-3)",
 	"Hole Wave Function",
@@ -220,7 +220,7 @@ const char *bound_hole_long_table[]={
 #endif
 };
 
-const char *bound_hole_short_table[]={
+extern const char *bound_hole_short_table[]={
 	"Non Equil 3D p QW DOS (cm-3)",
 	"Equil 3D p QW DOS (cm-3)",
 	"p Wave Func",
@@ -233,7 +233,7 @@ const char *bound_hole_short_table[]={
 
 //********************************** Electron Strings *****************************************
 
-const char *electron_long_table[]= {
+extern const char *electron_long_table[]= {
 	"",
 	"",
 	"",
@@ -270,7 +270,7 @@ const char *electron_long_table[]= {
 #endif
 };
 
-const char *electron_short_table[]= {
+extern const char *electron_short_table[]= {
 	"",
 	"",
 	"",
@@ -309,7 +309,7 @@ const char *electron_short_table[]= {
 
 //************************************* Hole Strings *****************************************
 
-const char *hole_long_table[]= {
+extern const char *hole_long_table[]= {
 	"",
 	"",
 	"",
@@ -346,7 +346,7 @@ const char *hole_long_table[]= {
 #endif
 };
 
-const char *hole_short_table[]= {
+extern const char *hole_short_table[]= {
 	"",
 	"",
 	"",
@@ -385,7 +385,7 @@ const char *hole_short_table[]= {
 
 //***************************** Grid Electrical Strings ***************************************
 
-const char *grid_electrical_long_table[]= {
+extern const char *grid_electrical_long_table[]= {
 	"Grid Position (microns)",
 	"",
 	"",
@@ -416,7 +416,7 @@ const char *grid_electrical_long_table[]= {
 #endif
 };
 
-const char *grid_electrical_short_table[]= {
+extern const char *grid_electrical_short_table[]= {
 	"Grid Pos (microns)",
 	"",
 	"",
@@ -449,7 +449,7 @@ const char *grid_electrical_short_table[]= {
 
 //***************************** Grid Optical Strings *****************************************
 
-const char *grid_optical_long_table[]= {
+extern const char *grid_optical_long_table[]= {
 	"",
 	"",
 	"",
@@ -486,7 +486,7 @@ const char *grid_optical_long_table[]= {
 #endif
 };
 
-const char *grid_optical_short_table[]= {
+extern const char *grid_optical_short_table[]= {
 	"",
 	"",
 	"",
@@ -525,7 +525,7 @@ const char *grid_optical_short_table[]= {
 
 //************************************** Node Strings *****************************************
 
-const char *node_long_table[]= {
+extern const char *node_long_table[]= {
 	"Reduced DOS Mass",
 	"Total Charge (C/cm3)",
 	"",
@@ -562,7 +562,7 @@ const char *node_long_table[]= {
 #endif
 };
 
-const char *node_short_table[]= {
+extern const char *node_short_table[]= {
 	"DOS Mr",
 	"Charge (C/cm3)",
 	"",
@@ -601,7 +601,7 @@ const char *node_short_table[]= {
 
 //***************************** QW Electron Strings *******************************************
 
-const char *qw_electron_long_table[]= {
+extern const char *qw_electron_long_table[]= {
 	"Electron 2D QW DOS, Non-Equilibrium (cm-2)",
 	"Electron 2D QW DOS, Equilibrium (cm-2)",
 	"",
@@ -629,7 +629,7 @@ const char *qw_electron_long_table[]= {
 #endif
 };
 
-const char *qw_electron_short_table[]= {
+extern const char *qw_electron_short_table[]= {
 	"Non-Equil 2D n QW DOS (cm-2)",
 	"Equil 2D n QW DOS (cm-2)",
 	"",
@@ -659,7 +659,7 @@ const char *qw_electron_short_table[]= {
 
 //*********************************** QW Hole Strings *****************************************
 
-const char *qw_hole_long_table[]= {
+extern const char *qw_hole_long_table[]= {
 	"Hole 2D QW DOS, Non-Equilibrium (cm-2)",
 	"Hole 2D QW DOS, Equilibrium (cm-2)",
 	"",
@@ -687,7 +687,7 @@ const char *qw_hole_long_table[]= {
 #endif
 };
 
-const char *qw_hole_short_table[]= {
+extern const char *qw_hole_short_table[]= {
 	"Non-Equil 2D p QW DOS (cm-2)",
 	"Equil 2D p QW DOS (cm-2)",
 	"",
@@ -717,7 +717,7 @@ const char *qw_hole_short_table[]= {
 
 //******************************* QuantumWell Strings *****************************************
 
-const char *quantum_well_long_table[]= {
+extern const char *quantum_well_long_table[]= {
 	"QW Position (microns)",
 	"",
 	"",
@@ -743,7 +743,7 @@ const char *quantum_well_long_table[]= {
 #endif
 };
 
-const char *quantum_well_short_table[]= {
+extern const char *quantum_well_short_table[]= {
 	"QW Pos (microns)",
 	"",
 	"",
@@ -772,7 +772,7 @@ const char *quantum_well_short_table[]= {
 
 //************************************** Mode Strings *****************************************
 
-const char *mode_long_table[]= {
+extern const char *mode_long_table[]= {
 	"Mode Photon Lifetime (s)",
 	"",
 	"Mirror Loss (cm-1)",
@@ -798,7 +798,7 @@ const char *mode_long_table[]= {
 #endif
 };
 
-const char *mode_short_table[]= {
+extern const char *mode_short_table[]= {
 	"Tau Phot (s)",
 	"",
 	"Mir Loss (cm-1)",
@@ -826,7 +826,7 @@ const char *mode_short_table[]= {
 
 //************************************* Mirror Strings *****************************************
 
-const char *mirror_long_table[]= {
+extern const char *mirror_long_table[]= {
 	"Mirror Position (microns)",
 	"Mirror Type",
 	"",
@@ -837,7 +837,7 @@ const char *mirror_long_table[]= {
 #endif
 };
 
-const char *mirror_short_table[]= {
+extern const char *mirror_short_table[]= {
 	"Mir Pos (microns)",
 	"Mir Type",
 	"",
@@ -850,7 +850,7 @@ const char *mirror_short_table[]= {
 
 //************************************* Cavity Strings *****************************************
 
-const char *cavity_long_table[]= {
+extern const char *cavity_long_table[]= {
 	"Cavity Area (microns2)",
 	"Cavity Type",
 	"",
@@ -861,7 +861,7 @@ const char *cavity_long_table[]= {
 #endif
 };
 
-const char *cavity_short_table[]= {
+extern const char *cavity_short_table[]= {
 	"Cav A (microns2)",
 	"Cav Type",
 	"",
@@ -874,7 +874,7 @@ const char *cavity_short_table[]= {
 
 //*********************************** Contact Strings *****************************************
 
-const char *contact_long_table[]= {
+extern const char *contact_long_table[]= {
 	"Contact Position (microns)",
 	"",
 	"",
@@ -896,7 +896,7 @@ const char *contact_long_table[]= {
 #endif
 };
 
-const char *contact_short_table[]= {
+extern const char *contact_short_table[]= {
 	"Cont Pos (microns)",
 	"",
 	"",
@@ -920,7 +920,7 @@ const char *contact_short_table[]= {
 
 //************************************ Surface Strings *****************************************
 
-const char *surface_long_table[]= {
+extern const char *surface_long_table[]= {
 	"Surface Position (microns)",
 	"",
 	"",
@@ -957,7 +957,7 @@ const char *surface_long_table[]= {
 #endif
 };
 
-const char *surface_short_table[]= {
+extern const char *surface_short_table[]= {
 	"Sur Pos (microns)",
 	"",
 	"",
@@ -996,7 +996,7 @@ const char *surface_short_table[]= {
 
 //************************************ Device Strings *****************************************
 
-const char *device_long_table[]= {
+extern const char *device_long_table[]= {
 	"",
 	"",
 	"Present Solution",
@@ -1017,7 +1017,7 @@ const char *device_long_table[]= {
 #endif
 };
 
-const char *device_short_table[]= {
+extern const char *device_short_table[]= {
 	"",
 	"",
 	"Pres Sol",
@@ -1040,7 +1040,7 @@ const char *device_short_table[]= {
 
 //******************************* Environment Strings *****************************************
 
-const char *environment_long_table[]= {
+extern const char *environment_long_table[]= {
 	"Potential Clamp Value",
 	"",
 	"Spectrum Start Position (microns)",
@@ -1065,7 +1065,7 @@ const char *environment_long_table[]= {
 #endif
 };
 
-const char *environment_short_table[]= {
+extern const char *environment_short_table[]= {
 	"Pot Clamp Value",
 	"",
 	"Spec Start Pos (microns)",
@@ -1092,7 +1092,7 @@ const char *environment_short_table[]= {
 
 //*********************************** Spectrum Strings *****************************************
 
-const char *spectrum_long_table[]= {
+extern const char *spectrum_long_table[]= {
 	"",
 	"",
 	"",
@@ -1108,7 +1108,7 @@ const char *spectrum_long_table[]= {
 #endif
 };
 
-const char *spectrum_short_table[]= {
+extern const char *spectrum_short_table[]= {
 	"",
 	"",
 	"",
@@ -1126,7 +1126,7 @@ const char *spectrum_short_table[]= {
 
 //*********************************** String Tables *******************************************
 
-const char **long_string_table[]={free_electron_long_table,
+extern const char **long_string_table[]={free_electron_long_table,
 							bound_electron_long_table,
 							free_hole_long_table,
 							bound_hole_long_table,
@@ -1147,7 +1147,7 @@ const char **long_string_table[]={free_electron_long_table,
 							environment_long_table,
 							spectrum_long_table };
 
-const char **short_string_table[]={free_electron_short_table,
+extern const char **short_string_table[]={free_electron_short_table,
 							bound_electron_short_table,
 							free_hole_short_table,
 							bound_hole_short_table,
