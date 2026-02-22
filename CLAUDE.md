@@ -141,6 +141,18 @@ ninja -j$(nproc)
 - [x] Linux cross-compilation: renamed 30 UPPERCASE.H headers to lowercase (all #includes already lowercase)
 - [x] Package as portable binary: CMake install + CPack → `SimWindows-1.0.0-win64.zip` (3.2 MB) with SDL2.dll, material.prm, example devices
 
+### Phase 5 — Legacy Cleanup: COMPLETE ✓
+
+**Result:** Deprecated files moved to `old/`, dead code removed, compiler warnings reduced.
+
+- [x] Moved `OWL/` (19 files), `RESOURCE/` (18 files), `SimWindowsCode_original.rar`, and Formulc docs to `old/`
+- [x] Removed dead `_matherr` Borland code from `globfunc.cpp`
+- [x] Changed all 44 `char*` string table arrays in `strtable.h` to `const char*` (eliminates ~1000 `-Wwrite-strings` warnings)
+- [x] Added `extern` to `const char` definitions in `strtable.h` (C++ const has internal linkage by default)
+- [x] Replaced 5 `strcpy` → `strncpy` in `funclass.cpp`, 4 `sprintf` → `snprintf` in `globfunc.cpp`
+- [x] Removed `#define NULL 0` from `simconst.h`, replaced ~84 `NULL` → `nullptr` across NUMERIC codebase
+- [x] Updated all `extern` declarations to match (`const char*` in globfunc.cpp, envclass.cpp, infclass.cpp, parclass.cpp)
+
 ---
 
 ## Key Architecture Details
@@ -162,7 +174,7 @@ ninja -j$(nproc)
 | `NUMERIC/envclass.cpp` | Largest file; environment + material setup |
 | `NUMERIC/INCLUDE/SIMCONST.H` | All constants, typedefs, flag definitions |
 | `NUMERIC/INCLUDE/WIOFUNC.H` | UI callback interface that must be implemented |
-| `OWL/simwin.cpp` | Entry point; shows how the UI drives `TDevice` |
+| `old/OWL/simwin.cpp` | Original entry point; shows how the UI drives `TDevice` |
 | `PROJECT/MATERIAL.PRM` | Material parameter file format — must remain compatible |
 
 ---
