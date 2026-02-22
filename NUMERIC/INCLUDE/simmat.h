@@ -21,9 +21,9 @@ protected:
 	short number_functions;
 	TPieceWiseFunction **function;
 public:
-	TMaterialParamModel(void) : number_functions(0), function((TPieceWiseFunction **)NULL) {}
+	TMaterialParamModel(void) : number_functions(0), function(nullptr) {}
 	TMaterialParamModel(TPieceWiseFunction *new_function)
-		: number_functions(0), function((TPieceWiseFunction **)NULL) { add_function(new_function); }
+		: number_functions(0), function(nullptr) { add_function(new_function); }
 	TMaterialParamModel(const TMaterialParamModel& new_model);
 	TMaterialParamModel(FILE *file_ptr) { read_state_file(file_ptr); }
 	~TMaterialParamModel(void);

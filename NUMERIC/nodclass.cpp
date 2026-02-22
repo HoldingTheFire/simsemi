@@ -48,7 +48,7 @@ private:
 	RadiativeHeat radiative_heat;
 	prec total_heat;
 public:
-	TNode(int node_number, RegionType region_type, TQuantumWell *qw_ptr=NULL);
+	TNode(int node_number, RegionType region_type, TQuantumWell *qw_ptr=nullptr);
 	void comp_charge(void)
 		{ total_charge=(THole::total_conc-TElectron::total_conc+
 						TElectron::ionized_doping_conc-THole::ionized_doping_conc); }
@@ -532,7 +532,7 @@ void TNode::init_value(FlagType flag_type, flag flag_value,
 {
 	flag contact_effects;
 
-    if (ref_contact!=NULL)
+    if (ref_contact!=nullptr)
     	contact_effects=ref_contact->get_value(EFFECTS,NORMALIZED);
     else
     	contact_effects=VALUE_NONE;

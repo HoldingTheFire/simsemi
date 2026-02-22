@@ -102,8 +102,8 @@ void TDeviceFileInput::add_doping(DopingInput new_doping)
 {
 	DopingInput *temp_ptr;
 
-	assert(new_doping.acceptor_function!=(TFunction *)NULL);
-	assert(new_doping.donor_function!=(TFunction *)NULL);
+	assert(new_doping.acceptor_function!=nullptr);
+	assert(new_doping.donor_function!=nullptr);
 
 	temp_ptr=(DopingInput *)realloc(doping_ptr,(number_doping+1)*sizeof(DopingInput));
 	if (!temp_ptr) {
@@ -146,7 +146,7 @@ void TDeviceFileInput::add_structure(StructureInput new_structure)
 {
 	StructureInput *temp_ptr;
 
-	assert(new_structure.alloy_function!=(TFunction *)NULL);
+	assert(new_structure.alloy_function!=nullptr);
 
 	temp_ptr=(StructureInput *)realloc(structure_ptr,(number_structure+1)*sizeof(StructureInput));
 	if (!temp_ptr) {

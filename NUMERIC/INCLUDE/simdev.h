@@ -86,8 +86,8 @@ private:
 public:
 	void read_data_file(const char *filename);
 	void write_data_file(ofstream& output_file, TValueFlag write_flags,
-						 FlagType ref_flag_type=(FlagType)NULL,
-						 flag ref_flag_value=(flag)NULL);
+						 FlagType ref_flag_type=(FlagType)0,
+						 flag ref_flag_value=(flag)0);
 private:
 	void read_state_file(FILE *file_ptr);
 public:

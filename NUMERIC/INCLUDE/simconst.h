@@ -84,10 +84,6 @@ enum ElementSide { FIRSTHALF, SECONDHALF };
 enum NodeSide { PREVIOUS_NODE=1, CURRENT_NODE, NEXT_NODE };
 enum ValidatorType { INCLUSIVE, EXCLUSIVE };
 
-#ifndef NULL
-	#define NULL	0
-#endif
-
 #ifndef FALSE
 	#define FALSE	0
 #endif

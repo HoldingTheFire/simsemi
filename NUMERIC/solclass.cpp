@@ -294,8 +294,8 @@ void TSolution::establish_elements(void)
 
 	temp_solution_grid_ptr=solution_grid_ptr;
 
-	*electrical_element_ptr=new TOhmicBoundaryElement(device_ptr,NULL,*temp_solution_grid_ptr,0);
-	*thermal_element_ptr=new TBoundaryThermalElement(device_ptr,NULL,*temp_solution_grid_ptr,0);
+	*electrical_element_ptr=new TOhmicBoundaryElement(device_ptr,nullptr,*temp_solution_grid_ptr,0);
+	*thermal_element_ptr=new TBoundaryThermalElement(device_ptr,nullptr,*temp_solution_grid_ptr,0);
 	if ((!(*thermal_element_ptr)) || (!(*electrical_element_ptr))) {
 		error_handler.set_error(ERROR_MEM_SOLUTION_ELEMENT,0,"","");
 		return;
@@ -333,8 +333,8 @@ void TSolution::establish_elements(void)
 		temp_solution_grid_ptr++;
 	}
 
-	*(electrical_element_ptr+req_elements-1)=new TOhmicBoundaryElement(device_ptr,*temp_solution_grid_ptr,NULL,1);
-	*(thermal_element_ptr+req_elements-1)=new TBoundaryThermalElement(device_ptr,*temp_solution_grid_ptr,NULL,1);
+	*(electrical_element_ptr+req_elements-1)=new TOhmicBoundaryElement(device_ptr,*temp_solution_grid_ptr,nullptr,1);
+	*(thermal_element_ptr+req_elements-1)=new TBoundaryThermalElement(device_ptr,*temp_solution_grid_ptr,nullptr,1);
 	if ((!(*(thermal_element_ptr+req_elements-1))) || (!(*(electrical_element_ptr+req_elements-1)))) {
 		error_handler.set_error(ERROR_MEM_SOLUTION_ELEMENT,0,"","");
 		return;

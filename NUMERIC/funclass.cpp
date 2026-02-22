@@ -671,7 +671,7 @@ private:
 TPieceWiseFunction::TPieceWiseFunction(TFunction *new_function,
 									   TFunction **new_lower_limit, TFunction **new_upper_limit)
 {
-	assert(new_function!=(TFunction *)NULL);
+	assert(new_function!=nullptr);
 	function=new_function;
 	number_variables=new_function->get_number_variables();
 
@@ -719,7 +719,7 @@ void TPieceWiseFunction::set_limits(TFunction **new_lower_limit, TFunction **new
 {
 	int i;
 
-	if ((new_lower_limit==(TFunction **)NULL) || (new_upper_limit==(TFunction **)NULL)){
+	if ((new_lower_limit==nullptr) || (new_upper_limit==nullptr)){
 		for (i=0;i<number_variables;i++) {
 			lower_limit[i]=new TConstant(0.0,0);
 			upper_limit[i]=new TConstant(0.0,0);
@@ -727,8 +727,8 @@ void TPieceWiseFunction::set_limits(TFunction **new_lower_limit, TFunction **new
 	}
 	else {
 		for (i=0;i<number_variables;i++) {
-			if ((new_lower_limit[i]==(TFunction *)NULL) ||
-				(new_upper_limit[i]==(TFunction *)NULL)) {
+			if ((new_lower_limit[i]==nullptr) ||
+				(new_upper_limit[i]==nullptr)) {
 				lower_limit[i]=new TConstant(0.0,0);
 				upper_limit[i]=new TConstant(0.0,0);
 			}

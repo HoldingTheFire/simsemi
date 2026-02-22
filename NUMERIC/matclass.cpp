@@ -25,9 +25,9 @@ protected:
 	short number_functions;
 	TPieceWiseFunction **function;
 public:
-	TMaterialParamModel(void) : number_functions(0), function((TPieceWiseFunction **)NULL) {}
+	TMaterialParamModel(void) : number_functions(0), function(nullptr) {}
 	TMaterialParamModel(TPieceWiseFunction *new_function)
-		: number_functions(0), function((TPieceWiseFunction **)NULL) { add_function(new_function); }
+		: number_functions(0), function(nullptr) { add_function(new_function); }
 	TMaterialParamModel(const TMaterialParamModel& new_model);
 	TMaterialParamModel(FILE *file_ptr) { read_state_file(file_ptr); }
 	~TMaterialParamModel(void);
@@ -67,7 +67,7 @@ void TMaterialParamModel::add_function(TPieceWiseFunction *new_function)
 {
 	TPieceWiseFunction **temp_ptr;
 
-	assert(new_function!=(TPieceWiseFunction *)NULL);
+	assert(new_function!=nullptr);
 
 	temp_ptr=(TPieceWiseFunction **)realloc(function,(number_functions+1)*sizeof(TPieceWiseFunction *));
 	if (!temp_ptr) {
@@ -133,7 +133,7 @@ TAlloy::TAlloy(string& alloy_name)
 	: name(alloy_name)
 {
 	int i;
-	for (i=0;i<MAT_MAX_NUMBER_PARAMETERS;i++) parameters[i]=(TMaterialParamModel *)NULL;
+	for (i=0;i<MAT_MAX_NUMBER_PARAMETERS;i++) parameters[i]=nullptr;
 }
 
 
@@ -142,7 +142,7 @@ TAlloy::~TAlloy(void)
 	int i;
 
 	for (i=0;i<MAT_MAX_NUMBER_PARAMETERS;i++)
-		if (parameters[i]!=(TMaterialParamModel *)NULL) delete parameters[i];
+		if (parameters[i]!=nullptr) delete parameters[i];
 }
 
 /********************************** class TMaterial *****************************************

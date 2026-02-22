@@ -53,9 +53,9 @@ TElement::TElement(RegionType region_type,TDevice *device, TNode* node_1, TNode*
 
 void TElement::get_effects(void)
 {
-	if (prev_node==NULL) grid_effects=(flag)next_node->get_value(GRID_ELECTRICAL,EFFECTS);
+	if (prev_node==nullptr) grid_effects=(flag)next_node->get_value(GRID_ELECTRICAL,EFFECTS);
 	else {
-		if (next_node==NULL) grid_effects=(flag)prev_node->get_value(GRID_ELECTRICAL,EFFECTS);
+		if (next_node==nullptr) grid_effects=(flag)prev_node->get_value(GRID_ELECTRICAL,EFFECTS);
 		else
 			grid_effects=(flag)prev_node->get_value(GRID_ELECTRICAL,EFFECTS) &
 						 (flag)next_node->get_value(GRID_ELECTRICAL,EFFECTS);
