@@ -115,16 +115,20 @@ ninja -j$(nproc)
 - [x] Device text editor panel with Generate button
 - [x] Native file dialogs via portable-file-dialogs
 
-### Phase 3b — GUI (Full Feature Parity)
-- [ ] Full contacts dialog: edit bias, ohmic/Schottky selection, recomb velocity, barrier height with put_value() + process_recompute_flags()
-- [ ] Electrical models dialog: checkboxes for SHR, B-B, Auger, stimulated recomb, Fermi-Dirac, etc. via effect flags
-- [ ] Thermal models dialog: lattice/electron/hole temp variation, joule heat, thermoelectric
-- [ ] Optical input dialog: enable/disable, photon energy, intensity, load spectrum
-- [ ] Surfaces dialog: temperature editing, heat sink toggle
-- [ ] Full preferences dialog: all clamp values, relaxation values, mode errors
-- [ ] Environment menu: temperature, radius, optical settings
-- [ ] Export plot data to CSV from plot windows
-- [ ] Dockable window layout (ImGui docking branch or manual layout)
+### Phase 3b — GUI (Full Feature Parity): COMPLETE ✓
+
+**Result:** All dialogs fully functional with NUMERIC API integration.
+
+- [x] Full contacts dialog: radio buttons (Ideal Ohmic/Finite Recomb/Schottky), recomb velocities, barrier height, computed current display
+- [x] Electrical models dialog: 23 checkboxes for all GRID_* effect flags, grouped by category
+- [x] Thermal models dialog: device-level temp flags + grid thermal effects + environment temp clamping
+- [x] Optical input dialog: enable/disable, spectrum editor with per-component photon energy/intensity, load spectrum file
+- [x] Surfaces dialog: temperature editing (lattice/electron/hole), heat sink toggle, thermal conductivity, refractive indices
+- [x] Full preferences dialog: all 14 environment parameters (error tolerances, clamp values, relaxation, iteration limits)
+- [x] Environment menu: optical input entry; Device menu: thermal models entry
+- [x] Export plot data to CSV from plot windows (save dialog per plot)
+- [x] Device Info expanded: modes/cavities/spectra counts, solver error display
+- [ ] Dockable window layout (ImGui docking branch or manual layout) — deferred
 
 ### Phase 4 — Validation & Polish
 - [x] Reproduce known-good simulation (p-n junction converges in 4 iterations) ✓
