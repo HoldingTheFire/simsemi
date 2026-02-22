@@ -1,0 +1,39 @@
+# Thesis Appendix B, Listing 1 - Multi-Quantum Well Solar Cell
+# GaAs/AlGaAs MQW solar cell with 15 quantum wells
+
+grid length=0.15 points=50
+grid length=0.10 points=300
+grid length=0.35 points=50
+grid length=0.18 points=100
+grid length=0.49 points=400
+grid length=0.43 points=50
+grid length=0.20 points=50
+
+structure material=gaas alloy=al length=0.50 conc=.4
+structure material=gaas alloy=al length=0.30 conc=.4
+electron_energy_lifetime length=0.2 value=1e-16
+electron_energy_lifetime length=0.6 value=1e-12
+
+region bulk length=0.8
+
+repeat start
+
+structure material=gaas alloy=al length=0.01 conc=0.0
+electron_energy_lifetime length=0.01 value=1e-9
+structure material=gaas alloy=al length=0.01 conc=.4
+electron_energy_lifetime length=0.01 value=1e-12
+region qw length=0.01
+region bulk length=0.01
+
+repeat=15
+
+structure material=gaas alloy=al length=0.30 conc=.4
+structure material=gaas alloy=al length=0.50 conc=.4
+electron_energy_lifetime length=0.6 value=1e-12
+electron_energy_lifetime length=0.2 value=1e-16
+
+region bulk length=0.8
+
+doping length=0.5 Na=5e17
+doping length=0.9
+doping length=0.5 Nd=5e17

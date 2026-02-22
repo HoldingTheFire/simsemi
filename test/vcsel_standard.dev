@@ -1,0 +1,153 @@
+# Thesis Appendix B, Listing 2 - Standard Delta Doped VCSEL
+# GaAs/AlGaAs VCSEL with standard abrupt DBR interfaces
+
+radius=3.5
+
+ELECTRON_MOBILITY Segments=2 length=6.4512
+Start_x=0.0 end_x=0.45 Value=((8000-22000*x+10000*x^2)*(300/C)^2.3)/(1+5.51e-17*(N+A))^0.233
+Start_x=0.45 end_x=1.0 Value=((-255+1160*x-720*x^2)*(300/C)^2.3)/(1+5.51e-17*(N+A))^.233
+
+HOLE_MOBILITY length=6.4512 value=((370-970*x+740*x^2)*(300/C)^2.7)/(1+3.17e-17*(N+A))^.266
+
+cavity surface area=38.484 length=1.707264
+
+mirror metal position=0 ref=0.9975
+mirror metal position=6.4512 ref=0.999
+
+###########################################
+# Top DBR
+
+structure material=gaas alloy=al length=.0044 conc=0.00
+grid length=.0034 points=5
+grid length=.0030 points=10
+structure material=gaas alloy=al length=.0515 conc=0.16
+grid length=.0445 points=10
+structure material=gaas alloy=al length=.0099 conc=0.58
+grid length=.0199 points=20
+structure material=gaas alloy=al length=.0604 conc=1.00
+grid length=.0504 points=10
+
+doping length=0.1262 Na=2e19 Na_deg=4 Na_level=0.026
+region length=0.1262 bulk
+REFRACTIVE_INDEX length=0.1262 model=oscillator_refractive_index
+
+repeat start
+
+structure material=gaas alloy=al length=.0099 conc=0.58
+grid length=0.0199 points=20
+structure material=gaas alloy=al length=.0515 conc=0.16
+grid length=0.0415 points=10
+structure material=gaas alloy=al length=.0099 conc=0.58
+grid length=0.0199 points=20
+structure material=gaas alloy=al length=.0604 conc=1.00
+grid length=0.0504 points=10
+
+doping length=.1317 Na=2e19 Na_deg=4 Na_level=0.026
+region length=.1317 bulk
+REFRACTIVE_INDEX length=0.1317 model=oscillator_refractive_index
+
+repeat=3
+
+repeat start
+
+structure material=gaas alloy=al length=.0099 conc=0.58
+grid length=0.0199 points=20
+doping length=.0015 Na=1.466e19-(9.66e18/.0015)*d Na_deg=4 Na_level=0.026
+doping length=.0069 Na=5e18 Na_deg=4 Na_level=0.026
+doping length=.0015 Na=5e18+(9.66e18/.0015)*d Na_deg=4 Na_level=0.026
+
+structure material=gaas alloy=al length=.0515 conc=0.16
+grid length=0.0415 points=10
+doping length=.0015 Na=1.466e19-(9.66e18/.0015)*d Na_deg=4 Na_level=0.026
+doping length=.0485 Na=5e18 Na_deg=4 Na_level=0.026
+doping length=.0015 Na=5e18+(2.5e19/.0015)*d Na_deg=4 Na_level=0.026
+
+structure material=gaas alloy=al length=.0099 conc=0.58
+grid length=0.0199 points=20
+doping length=.0015 Na=3e19-(2.5e19/.0015)*d Na_deg=4 Na_level=0.026
+doping length=.0069 Na=5e18 Na_deg=4 Na_level=0.026
+doping length=.0015 Na=5e18+(2.5e19/.0015)*d Na_deg=4 Na_level=0.026
+
+structure material=gaas alloy=al length=.0604 conc=1.00
+grid length=0.0504 points=10
+doping length=.0015 Na=3e19-(2.5e19/.0015)*d Na_deg=4 Na_level=0.026
+doping length=.0574 Na=5e18 Na_deg=4 Na_level=0.026
+doping length=.0015 Na=5e18+(9.66e18/.0015)*d Na_deg=4 Na_level=0.026
+
+region length=.1317 bulk
+REFRACTIVE_INDEX length=0.1317 model=oscillator_refractive_index
+
+repeat=14
+
+doping length=.0015 Na=1.466e19-(9.66e18/.0015)*d Na_deg=4 Na_level=0.026
+
+###############################################
+# Active Region
+
+grid length=0.005 points=20
+grid length=0.0841 points=200
+grid length=0.0600 points=600
+grid length=0.0841 points=200
+grid length=0.005 points=20
+
+structure material=gaas alloy=al length=.0050 conc=0.58
+structure material=gaas alloy=al length=.0891 conc=0.16
+doping length=.0035 Na=3e18 Na_deg=4 Na_level=0.026
+doping length=.0891 Na=1e17 Na_deg=4 Na_level=0.026
+region length=.0941 bulk
+REFRACTIVE_INDEX length=0.0941 model=oscillator_refractive_index
+
+structure material=gaas alloy=al length=.0080 conc=0.00
+structure material=gaas alloy=al length=.0080 conc=0.16
+structure material=gaas alloy=al length=.0080 conc=0.00
+structure material=gaas alloy=al length=.0080 conc=0.16
+structure material=gaas alloy=al length=.0080 conc=0.00
+doping length=.04
+region length=.0080 qw
+REFRACTIVE_INDEX length=0.0080 value=5
+region length=.0080 bulk
+REFRACTIVE_INDEX length=0.0080 model=oscillator_refractive_index
+region length=.0080 qw
+REFRACTIVE_INDEX length=0.0080 value=5
+region length=.0080 bulk
+REFRACTIVE_INDEX length=0.0080 model=oscillator_refractive_index
+region length=.0080 qw
+REFRACTIVE_INDEX length=0.0080 value=5
+
+structure material=gaas alloy=al length=.0891 conc=0.16
+structure material=gaas alloy=al length=.0050 conc=0.58
+doping length=.0891
+doping length=.0050
+region length=.0941 bulk
+REFRACTIVE_INDEX length=0.0941 model=oscillator_refractive_index
+
+##########################################################################
+# Bottom DBR
+
+repeat start
+
+structure material=gaas alloy=al length=.0604 conc=1.00
+grid length=0.0504 points=10
+structure material=gaas alloy=al length=.0099 conc=0.58
+grid length=0.0199 points=20
+structure material=gaas alloy=al length=.0515 conc=0.16
+grid length=0.0415 points=10
+structure material=gaas alloy=al length=.0099 conc=0.58
+grid length=0.0199 points=20
+
+doping length=.1317 Nd=3e18 Nd_deg=2 Nd_level=0.005
+region length=.1317 bulk
+REFRACTIVE_INDEX length=0.1317 model=oscillator_refractive_index
+
+repeat=28
+
+structure material=gaas alloy=al length=.0604 conc=1.00
+grid length=0.0504 points=10
+structure material=gaas alloy=al length=.0099 conc=0.58
+grid length=0.0199 points=20
+structure material=gaas alloy=al length=.1000 conc=0.00
+grid length=0.0950 points=40
+
+doping length=.1703 Nd=3e18 Nd_deg=2 Nd_level=0.005
+region length=.1703 bulk
+REFRACTIVE_INDEX length=0.1703 model=oscillator_refractive_index
