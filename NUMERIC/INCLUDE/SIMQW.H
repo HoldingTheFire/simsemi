@@ -19,6 +19,8 @@
 class TQuantumWell: protected T2DElectron, protected T2DHole {
 	friend TNode;
 	friend TGrid;
+	friend TBoundElectron;
+	friend TBoundHole;
 private:
 	TDevice *device_ptr;
 	TNode** grid_ptr;

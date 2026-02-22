@@ -194,10 +194,10 @@ void TUserFunction::function_fix_up(void)
 
 	string temp_string(function_string);
 
-	while (start_search!=NPOS) {
+	while (start_search!=std::string::npos) {
 		start_search=temp_string.find("e",start_search);
-		if ((start_search>0) && (start_search!=NPOS)) {
-			prior_char=temp_string.get_at(start_search-1);
+		if ((start_search>0) && (start_search!=std::string::npos)) {
+			prior_char=temp_string[start_search-1];
 			if ((prior_char>='0') && (prior_char<='9'))	temp_string.replace(start_search,1,"E");
 			start_search++;
 		}

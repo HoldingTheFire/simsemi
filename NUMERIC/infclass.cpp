@@ -655,7 +655,7 @@ void TDeviceFileInput::clear_contents(void)
 	structure_ptr=(StructureInput *)0;
 	number_region=0;
 	number_qw=0;
-	region_ptr=(StructureInput *)0;
+	region_ptr=nullptr;
 	number_cavity=0;
 	cavity_ptr=(CavityInput *)0;
 	number_mirror=0;

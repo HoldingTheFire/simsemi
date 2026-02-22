@@ -98,7 +98,7 @@ public:
 private:
 	void read_state_file(FILE *file_ptr);
 	void delete_undo_file(void)
-		{ if (access(undo_filepath.c_str(),0)==0) remove(undo_filepath.c_str()); }
+		{ if (std::filesystem::exists(undo_filepath.c_str())) remove(undo_filepath.c_str()); }
 
 // Spectrum functions
 public:

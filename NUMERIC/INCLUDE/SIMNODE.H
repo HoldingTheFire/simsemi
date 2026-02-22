@@ -26,6 +26,8 @@ class TNode: protected TElectron, protected THole, protected TGrid {
 	friend TQWThermalElement;
 	friend TOhmicBoundaryElement;
 	friend TBoundaryThermalElement;
+	friend T2DElectron;
+	friend T2DHole;
 private:
 	prec reduced_dos_mass;
 	prec total_charge;

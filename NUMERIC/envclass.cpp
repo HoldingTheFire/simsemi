@@ -104,7 +104,7 @@ public:
 private:
 	void read_state_file(FILE *file_ptr);
 	void delete_undo_file(void)
-		{ if (access(undo_filepath.c_str(),0)==0) remove(undo_filepath.c_str()); }
+		{ if (std::filesystem::exists(undo_filepath.c_str())) remove(undo_filepath.c_str()); }
 
 // Spectrum functions
 public:
@@ -146,8 +146,8 @@ TEnvironment::TEnvironment(void)
 	optical_param.number_wavelengths=0;
 	optical_param.start_pos=0.0;
 	optical_param.end_pos=0.0;
-	optical_spectrum.first_wavelength=(OpticalParam *)0;
-	optical_spectrum.last_wavelength=(OpticalParam *)0;
+	optical_spectrum.first_wavelength=nullptr;
+	optical_spectrum.last_wavelength=nullptr;
 	env_effects=ENV_SPEC_ENTIRE_DEVICE | ENV_SPEC_LEFT_INCIDENT | ENV_CLAMP_POTENTIAL;
 	undo_ready=FALSE;
 	undo_filepath="";
@@ -489,8 +489,8 @@ logical TEnvironment::canundo(void)
 {
 	logical result;
 
-	result=(env_effects & ENV_UNDO_SIMULATION) && undo_ready && !undo_filepath.is_null() && device() && (!solving);
-	if (result) result&=access(undo_filepath.c_str(),0)==0;
+	result=(env_effects & ENV_UNDO_SIMULATION) && undo_ready && !undo_filepath.empty() && device() && (!solving);
+	if (result) result&=std::filesystem::exists(undo_filepath.c_str());
 	return(result);
 }
 
@@ -831,7 +831,7 @@ void TEnvironment::delete_spectrum(void)
 		}
 
 		optical_param.number_wavelengths=0;
-		optical_spectrum.first_wavelength=(OpticalParam *)0;
+		optical_spectrum.first_wavelength=nullptr;
 
 		set_update_flags(SPECTRUM,INCIDENT_INPUT_INTENSITY);
 	}

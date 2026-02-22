@@ -21,11 +21,11 @@
 //*********************************** Global Functions *****************************************
 
 /***********************************************************************************************
-void _matherr(exception *new_error)
-	This function catches domain and range errors for math functions. It should not be
-	called directly.
+_matherr - Borland-specific math error handler. Not available on modern compilers.
+Replaced by standard C++ math error handling (errno / fetestexcept).
 */
 
+#if defined(__BORLANDC__)
 int _matherr(exception *new_error)
 {
 	error_handler.set_error(ERROR_SIMULATION,0,"","");
@@ -36,6 +36,7 @@ int _matherr(exception *new_error)
 	return(0);
 #endif
 }
+#endif
 
 /***********************************************************************************************
 void convert_mantissa_exp(float& mantissa, int& exponent)
@@ -273,7 +274,7 @@ double rnd(void)
 	formulc.c
 */
 
-double rnd(void)
+extern "C" double rnd(void)
 {
 	return(((double)rand()*2.0/(double)RAND_MAX)-1.0);
 }
@@ -284,9 +285,9 @@ double rnd_init(void)
 	formulc.c
 */
 
-void rnd_init(void)
+extern "C" void rnd_init(void)
 {
-	randomize();
+	srand((unsigned)time(nullptr));
 }
 
 
@@ -1166,7 +1167,7 @@ logical valid_short_string(FlagType flag_type, flag flag_value)
 	bit=bit_position(flag_value);
 
 	result&=(string(short_string_table[(int)(flag_type-1)][bit])=="") ? FALSE : TRUE;
-	result&=(string(short_string_table[(int)(flag_type-1)][bit]).contains(",")) ? FALSE : TRUE;
+	result&=(string(short_string_table[(int)(flag_type-1)][bit]).find(",") != std::string::npos) ? FALSE : TRUE;
 	return(result);
 }
 

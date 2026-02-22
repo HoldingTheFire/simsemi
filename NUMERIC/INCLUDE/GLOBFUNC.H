@@ -19,9 +19,7 @@
 //******************************** Global Function and macros **********************************
 
 #define sq(x) ((x)*(x))
-#define round(x) ((int)((((double)(x)-floor(x)) <= 0.5) ? floor(x) : ceil(x)))
-
-int _matherr(exception *new_error);
+#define sim_round(x) ((int)((((double)(x)-floor(x)) <= 0.5) ? floor(x) : ceil(x)))
 void convert_mantissa_exp(float& mantissa, int& exponent);
 prec bernoulli(prec x);
 prec deriv_bernoulli(prec x);
@@ -42,8 +40,8 @@ prec log_1_x(prec x);
 prec log_1_div_1_x(prec x);
 prec dilog(prec x);
 prec trilog(prec x);
-double rnd(void);
-void rnd_init(void);
+extern "C" double rnd(void);
+extern "C" void rnd_init(void);
 void scale(float *data, int points, float& minimum, float& maximum);
 void scale_with_skip(float *data, logical *skip, int points, float& minimum, float& maximum);
 void round_scale(float& minimum, float& maximum);

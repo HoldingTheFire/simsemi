@@ -288,12 +288,12 @@ double fval(formu function, char *args, double *values)
 static double value(formu func)
 {
  double buffer[BUFSIZE];
- register double *bufp = buffer;
+ double *bufp = buffer;
 	  /* points to the first free space in the buffer */
  double x,y,z;
- register double result;
- register UCHAR *function=func.code;
- register double *ctable=func.ctable;
+ double result;
+ UCHAR *function=func.code;
+ double *ctable=func.ctable;
 
  DBG(puts("Entering value"));
  if(!function) {
@@ -1238,7 +1238,7 @@ void rnd_init(void)
 *  Written by:    W. L. Maier
 *
 *	METHOD...
-*		16 parallel copies of a linear shift register with
+*		16 parallel copies of a linear shift with
 *		period 2^250 - 1.  FAR longer period than the usual
 *		linear congruent generator, and commonly faster as
 *		well.  (For details see the above paper, and the
@@ -1335,8 +1335,8 @@ void r250_init(int seed)
 double dr250(void)
 {
 /*---------------------------------------------------------------------------*/
-    register int    j;
-    register unsigned int new_rand;
+    int    j;
+    unsigned int new_rand;
 /*---------------------------------------------------------------------------*/
     if (r250_index >= 147)
         j = r250_index - 147;     /* Wrap pointer around */
