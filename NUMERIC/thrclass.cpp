@@ -1333,8 +1333,8 @@ void TQWThermalElement::update_sub_nodes(void)
 
 	temp_ptr=device_grid_ptr+prev_node_number+1;
 	for (i=prev_node_number+1;i<=next_node_number-1;i++) {
-		(*temp_ptr)->init_value(ELECTRON,PLANCK_POT,qw_node,NULL);
-		(*temp_ptr)->init_value(HOLE,PLANCK_POT,qw_node,NULL);
+		(*temp_ptr)->init_value(ELECTRON,PLANCK_POT,qw_node,nullptr);
+		(*temp_ptr)->init_value(HOLE,PLANCK_POT,qw_node,nullptr);
 	}
 }
 

@@ -98,13 +98,13 @@ public:
 	void load_file(const char *filename);
 	void read_data_file(const char *filename);
 	void write_data_file(const char *filename, TValueFlag write_flags,
-						  FlagType ref_flag_type=(FlagType)NULL,
-						  flag ref_flag_value=(flag)NULL);
+						  FlagType ref_flag_type=(FlagType)0,
+						  flag ref_flag_value=(flag)0);
 	void write_state_file(const char *filename);
 private:
 	void read_state_file(FILE *file_ptr);
 	void delete_undo_file(void)
-		{ if (access(undo_filepath.c_str(),0)==0) remove(undo_filepath.c_str()); }
+		{ if (std::filesystem::exists(undo_filepath.c_str())) remove(undo_filepath.c_str()); }
 
 // Spectrum functions
 public:
@@ -146,8 +146,8 @@ TEnvironment::TEnvironment(void)
 	optical_param.number_wavelengths=0;
 	optical_param.start_pos=0.0;
 	optical_param.end_pos=0.0;
-	optical_spectrum.first_wavelength=(OpticalParam *)0;
-	optical_spectrum.last_wavelength=(OpticalParam *)0;
+	optical_spectrum.first_wavelength=nullptr;
+	optical_spectrum.last_wavelength=nullptr;
 	env_effects=ENV_SPEC_ENTIRE_DEVICE | ENV_SPEC_LEFT_INCIDENT | ENV_CLAMP_POTENTIAL;
 	undo_ready=FALSE;
 	undo_filepath="";
@@ -442,7 +442,7 @@ void TEnvironment::comp_value(FlagType flag_type, flag flag_value,
 
 void TEnvironment::solve(void)
 {
-	extern char undo_filename[];
+	extern const char undo_filename[];
 	extern char executable_path[];
 
 	if (device()) {
@@ -489,8 +489,8 @@ logical TEnvironment::canundo(void)
 {
 	logical result;
 
-	result=(env_effects & ENV_UNDO_SIMULATION) && undo_ready && !undo_filepath.is_null() && device() && (!solving);
-	if (result) result&=access(undo_filepath.c_str(),0)==0;
+	result=(env_effects & ENV_UNDO_SIMULATION) && undo_ready && !undo_filepath.empty() && device() && (!solving);
+	if (result) result&=std::filesystem::exists(undo_filepath.c_str());
 	return(result);
 }
 
@@ -505,7 +505,7 @@ void TEnvironment::load_file(const char *filename)
 {
 	FileType file_type;
 	FILE *file_ptr;
-	extern char state_string[], state_version_string[];
+	extern const char state_string[], state_version_string[];
 	extern int state_string_size, state_version_string_size;
 	char new_state_string[40], new_state_version_string[40];
 	TParseDevice *device_parser;
@@ -650,7 +650,7 @@ void TEnvironment::write_data_file(const char *filename, TValueFlag write_flags,
 void TEnvironment::write_state_file(const char *filename)
 {
 	int i;
-	extern char state_string[], state_version_string[];
+	extern const char state_string[], state_version_string[];
 	extern int state_string_size, state_version_string_size;
 	FILE *file_ptr;
 	prec energy,intensity_in,intensity_out;
@@ -831,7 +831,7 @@ void TEnvironment::delete_spectrum(void)
 		}
 
 		optical_param.number_wavelengths=0;
-		optical_spectrum.first_wavelength=(OpticalParam *)0;
+		optical_spectrum.first_wavelength=nullptr;
 
 		set_update_flags(SPECTRUM,INCIDENT_INPUT_INTENSITY);
 	}

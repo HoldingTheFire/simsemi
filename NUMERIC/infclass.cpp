@@ -102,8 +102,8 @@ void TDeviceFileInput::add_doping(DopingInput new_doping)
 {
 	DopingInput *temp_ptr;
 
-	assert(new_doping.acceptor_function!=(TFunction *)NULL);
-	assert(new_doping.donor_function!=(TFunction *)NULL);
+	assert(new_doping.acceptor_function!=nullptr);
+	assert(new_doping.donor_function!=nullptr);
 
 	temp_ptr=(DopingInput *)realloc(doping_ptr,(number_doping+1)*sizeof(DopingInput));
 	if (!temp_ptr) {
@@ -146,7 +146,7 @@ void TDeviceFileInput::add_structure(StructureInput new_structure)
 {
 	StructureInput *temp_ptr;
 
-	assert(new_structure.alloy_function!=(TFunction *)NULL);
+	assert(new_structure.alloy_function!=nullptr);
 
 	temp_ptr=(StructureInput *)realloc(structure_ptr,(number_structure+1)*sizeof(StructureInput));
 	if (!temp_ptr) {
@@ -393,7 +393,7 @@ prec TDeviceFileInput::get_material_param(MaterialParam param_number,prec *value
 	int i=0;
 	logical result_obtained=FALSE;
 	prec result, next_length=0;
-	extern char *material_parameters_variables[];
+	extern const char *material_parameters_variables[];
 
 	assert(material_param_entered(param_number));
 
@@ -655,7 +655,7 @@ void TDeviceFileInput::clear_contents(void)
 	structure_ptr=(StructureInput *)0;
 	number_region=0;
 	number_qw=0;
-	region_ptr=(StructureInput *)0;
+	region_ptr=nullptr;
 	number_cavity=0;
 	cavity_ptr=(CavityInput *)0;
 	number_mirror=0;

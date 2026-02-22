@@ -142,13 +142,17 @@ private:
 TUserFunction::TUserFunction(string new_function_string, string new_variables)
 	: TFunction(USER_FUNCTION,(short)strlen(new_variables.c_str()))
 {
-	function_string=new char[strlen(new_function_string.c_str())+1];
-	strcpy(function_string,new_function_string.c_str());
-	strlwr(function_string);
+	size_t func_len=strlen(new_function_string.c_str())+1;
+	function_string=new char[func_len];
+	strncpy(function_string,new_function_string.c_str(),func_len);
+	std::transform(function_string, function_string + strlen(function_string),
+	               function_string, ::tolower);
 
-	variable_string=new char[strlen(new_variables.c_str())+1];
-	strcpy(variable_string,new_variables.c_str());
-	strlwr(variable_string);
+	size_t var_len=strlen(new_variables.c_str())+1;
+	variable_string=new char[var_len];
+	strncpy(variable_string,new_variables.c_str(),var_len);
+	std::transform(variable_string, variable_string + strlen(variable_string),
+	               variable_string, ::tolower);
 
 	translate_error=-1;
 
@@ -158,11 +162,13 @@ TUserFunction::TUserFunction(string new_function_string, string new_variables)
 TUserFunction::TUserFunction(const TUserFunction& new_user_function)
 	: TFunction(new_user_function)
 {
-	function_string=new char[strlen(new_user_function.function_string)+1];
-	variable_string=new char[strlen(new_user_function.variable_string)+1];
+	size_t func_len=strlen(new_user_function.function_string)+1;
+	size_t var_len=strlen(new_user_function.variable_string)+1;
+	function_string=new char[func_len];
+	variable_string=new char[var_len];
 
-	strcpy(function_string,new_user_function.function_string);
-	strcpy(variable_string,new_user_function.variable_string);
+	strncpy(function_string,new_user_function.function_string,func_len);
+	strncpy(variable_string,new_user_function.variable_string,var_len);
 
 	translate_error=new_user_function.translate_error;
 	if (fnot_empty(new_user_function.function)) translate();
@@ -194,15 +200,15 @@ void TUserFunction::function_fix_up(void)
 
 	string temp_string(function_string);
 
-	while (start_search!=NPOS) {
+	while (start_search!=std::string::npos) {
 		start_search=temp_string.find("e",start_search);
-		if ((start_search>0) && (start_search!=NPOS)) {
-			prior_char=temp_string.get_at(start_search-1);
+		if ((start_search>0) && (start_search!=std::string::npos)) {
+			prior_char=temp_string[start_search-1];
 			if ((prior_char>='0') && (prior_char<='9'))	temp_string.replace(start_search,1,"E");
 			start_search++;
 		}
 	}
-	strcpy(function_string,temp_string.c_str());
+	strncpy(function_string,temp_string.c_str(),strlen(function_string)+1);
 }
 
 void TUserFunction::read_contents(FILE *file_ptr)
@@ -665,7 +671,7 @@ private:
 TPieceWiseFunction::TPieceWiseFunction(TFunction *new_function,
 									   TFunction **new_lower_limit, TFunction **new_upper_limit)
 {
-	assert(new_function!=(TFunction *)NULL);
+	assert(new_function!=nullptr);
 	function=new_function;
 	number_variables=new_function->get_number_variables();
 
@@ -713,7 +719,7 @@ void TPieceWiseFunction::set_limits(TFunction **new_lower_limit, TFunction **new
 {
 	int i;
 
-	if ((new_lower_limit==(TFunction **)NULL) || (new_upper_limit==(TFunction **)NULL)){
+	if ((new_lower_limit==nullptr) || (new_upper_limit==nullptr)){
 		for (i=0;i<number_variables;i++) {
 			lower_limit[i]=new TConstant(0.0,0);
 			upper_limit[i]=new TConstant(0.0,0);
@@ -721,8 +727,8 @@ void TPieceWiseFunction::set_limits(TFunction **new_lower_limit, TFunction **new
 	}
 	else {
 		for (i=0;i<number_variables;i++) {
-			if ((new_lower_limit[i]==(TFunction *)NULL) ||
-				(new_upper_limit[i]==(TFunction *)NULL)) {
+			if ((new_lower_limit[i]==nullptr) ||
+				(new_upper_limit[i]==nullptr)) {
 				lower_limit[i]=new TConstant(0.0,0);
 				upper_limit[i]=new TConstant(0.0,0);
 			}

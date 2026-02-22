@@ -21,23 +21,6 @@
 //*********************************** Global Functions *****************************************
 
 /***********************************************************************************************
-void _matherr(exception *new_error)
-	This function catches domain and range errors for math functions. It should not be
-	called directly.
-*/
-
-int _matherr(exception *new_error)
-{
-	error_handler.set_error(ERROR_SIMULATION,0,"","");
-	new_error->retval=0.0;
-#ifdef NDEBUG
-	return(1);
-#else
-	return(0);
-#endif
-}
-
-/***********************************************************************************************
 void convert_mantissa_exp(float& mantissa, int& exponent)
 	Takes a number of the form mantissa*2^exponent and converts it to the form
 	mantissa*10^exponent.
@@ -273,7 +256,7 @@ double rnd(void)
 	formulc.c
 */
 
-double rnd(void)
+extern "C" double rnd(void)
 {
 	return(((double)rand()*2.0/(double)RAND_MAX)-1.0);
 }
@@ -284,9 +267,9 @@ double rnd_init(void)
 	formulc.c
 */
 
-void rnd_init(void)
+extern "C" void rnd_init(void)
 {
-	randomize();
+	srand((unsigned)time(nullptr));
 }
 
 
@@ -900,9 +883,9 @@ string prec_to_string(prec value, int precision, NumberFormat format)
 	char number_string[25];
 	char format_string[5];
 
-	if (format==NORMAL) sprintf(format_string,"%%.%dlf",precision);
-	else sprintf(format_string,"%%.%dle",precision);
-	sprintf(number_string,format_string,value);
+	if (format==NORMAL) snprintf(format_string,sizeof(format_string),"%%.%dlf",precision);
+	else snprintf(format_string,sizeof(format_string),"%%.%dle",precision);
+	snprintf(number_string,sizeof(number_string),format_string,value);
 	result=number_string;
 	return(result);
 }
@@ -911,14 +894,14 @@ string int_to_string(int value)
 {
 	string result;
 	char number_string[25];
-	sprintf(number_string,"%d",value);
+	snprintf(number_string,sizeof(number_string),"%d",value);
 	result=number_string;
 	return(result);
 }
 
 string get_short_string(FlagType flag_type, flag flag_value)
 {
-	extern char **short_string_table[];
+	extern const char **short_string_table[];
 
 	assert(TValueFlag::valid_single_flag(flag_type,flag_value));
 	assert(valid_short_string(flag_type,flag_value));
@@ -927,7 +910,7 @@ string get_short_string(FlagType flag_type, flag flag_value)
 
 string get_long_string(FlagType flag_type, flag flag_value)
 {
-	extern char **long_string_table[];
+	extern const char **long_string_table[];
 
 	assert(TValueFlag::valid_single_flag(flag_type,flag_value));
 	assert(valid_long_string(flag_type,flag_value));
@@ -941,7 +924,7 @@ void long_string_to_flag(string long_string, FlagType& flag_type, flag& flag_val
 	flag max_flag, test_flag;
 	logical match=FALSE;
 	TValueFlag flag_class;
-	extern char **long_string_table[];
+	extern const char **long_string_table[];
 
 	flag_type=(FlagType)0;
 	flag_value=(flag)0;
@@ -973,7 +956,7 @@ void short_string_to_flag(string short_string, FlagType& flag_type, flag& flag_v
 	flag max_flag, test_flag;
 	logical match=FALSE;
 	TValueFlag flag_class;
-	extern char **short_string_table[];
+	extern const char **short_string_table[];
 
 	flag_type=(FlagType)0;
 	flag_value=(flag)0;
@@ -1002,7 +985,7 @@ int material_string_to_value(string material_string)
 {
 	int i=0;
 	logical match=FALSE;
-	extern char *material_parameters_strings[];
+	extern const char *material_parameters_strings[];
 
 	while (!match && i<MAT_MAX_NUMBER_PARAMETERS) {
 		match=(material_parameters_strings[i]==material_string);
@@ -1014,7 +997,7 @@ int material_string_to_value(string material_string)
 
 string material_value_to_string(int material_value)
 {
-	extern char *material_parameters_strings[];
+	extern const char *material_parameters_strings[];
 
 	assert((material_value>=1) && (material_value<=MAT_MAX_NUMBER_PARAMETERS));
 	return(material_parameters_strings[material_value-1]);
@@ -1159,20 +1142,20 @@ string get_status_string(StatusType status)
 
 logical valid_short_string(FlagType flag_type, flag flag_value)
 {
-	extern char **short_string_table[];
+	extern const char **short_string_table[];
 	logical result=TRUE;
 	int bit;
 
 	bit=bit_position(flag_value);
 
 	result&=(string(short_string_table[(int)(flag_type-1)][bit])=="") ? FALSE : TRUE;
-	result&=(string(short_string_table[(int)(flag_type-1)][bit]).contains(",")) ? FALSE : TRUE;
+	result&=(string(short_string_table[(int)(flag_type-1)][bit]).find(",") != std::string::npos) ? FALSE : TRUE;
 	return(result);
 }
 
 logical valid_long_string(FlagType flag_type, flag flag_value)
 {
-	extern char **long_string_table[];
+	extern const char **long_string_table[];
 	logical result=TRUE;
 
 	result&=(string(long_string_table[(int)(flag_type-1)][bit_position(flag_value)])=="") ? FALSE : TRUE;

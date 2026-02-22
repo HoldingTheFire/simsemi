@@ -71,11 +71,11 @@ string TParse::get_string(void)
 		line_number++;
 		if (input_file_stream.eof()) new_line="";
 		else {
-			new_line.read_to_delim(input_file_stream);
-			new_line=new_line.strip(string::Leading);
-			if (new_line.is_null()) continue;
+			std::getline(input_file_stream, new_line);
+			new_line.erase(0, new_line.find_first_not_of(" \t\n\r"));
+			if (new_line.empty()) continue;
 			if (new_line.find_first_of("#\n")==0) continue;
-			new_line.to_upper();
+			std::transform(new_line.begin(), new_line.end(), new_line.begin(), ::toupper);
 		}
 		valid_line=TRUE;
 	}
@@ -89,14 +89,14 @@ string TParse::get_name(string& line_string, string value_string)
 
 	value_string.append("=");
 	token_position=line_string.find(value_string);
-	if (token_position==NPOS) {
+	if (token_position==std::string::npos) {
 		error_handler.set_error(ERROR_PARSE_NAME_STRING,line_number,value_string,file_name);
 		return("");
 	}
 	else {
 		if (token_position!=0) {
-			if ((line_string.get_at(token_position-1)!=' ') &&
-				(line_string.get_at(token_position-1)!='\t'))
+			if ((line_string[token_position-1]!=' ') &&
+				(line_string[token_position-1]!='\t'))
 				error_handler.set_error(ERROR_PARSE_NAME_STRING,line_number,value_string,file_name);
 		}
 	}
@@ -108,7 +108,7 @@ string TParse::get_name(string& line_string, string value_string)
 	}
 
 	result_string=line_string.substr(name_start,name_end-name_start);
-	line_string.remove(token_position,name_end-token_position);
+	line_string.erase(token_position,name_end-token_position);
 	return(result_string);
 }
 
@@ -116,8 +116,8 @@ FunctionType TParse::get_function_type(string line_string, string value_string)
 {
 	string test_string(get_name(line_string,value_string));
 	if (error_handler.fail()) return(NON_FUNCTION);
-	if (test_string.find_first_not_of("0123456789.eE+-")==NPOS) return(CONSTANT);
-	if (test_string.find_first_not_of("0123456789.eE+-,")==NPOS) return(POLYNOMIAL);
+	if (test_string.find_first_not_of("0123456789.eE+-")==std::string::npos) return(CONSTANT);
+	if (test_string.find_first_not_of("0123456789.eE+-,")==std::string::npos) return(POLYNOMIAL);
 	return(USER_FUNCTION);
 }
 
@@ -125,7 +125,7 @@ prec TParse::get_float(string& line_string, string value_string)
 {
 	string number_string(get_name(line_string,value_string));
 	if(error_handler.fail()) return(0);
-	if (number_string.find_first_not_of("0123456789.eE+-")!=NPOS) {
+	if (number_string.find_first_not_of("0123456789.eE+-")!=std::string::npos) {
 		error_handler.set_error(ERROR_PARSE_FLOAT,line_number,value_string,file_name);
 		return(0);
 	}
@@ -136,7 +136,7 @@ long TParse::get_long(string& line_string, string value_string)
 {
 	string number_string(get_name(line_string,value_string));
 	if(error_handler.fail()) return(0);
-	if (number_string.find_first_not_of("0123456789")!=NPOS) {
+	if (number_string.find_first_not_of("0123456789")!=std::string::npos) {
 		error_handler.set_error(ERROR_PARSE_LONG,line_number,value_string,file_name);
 		return(0);
 	}
@@ -195,7 +195,7 @@ int TParse::get_terms(string& line_string, string value_string, prec* &terms)
 	if (error_handler.fail()) return(0);
 
 	comma_position=term_string.find_first_of(",",0);
-	while (comma_position!=NPOS) {
+	while (comma_position!=std::string::npos) {
 		number_terms++;
 		if (comma_position==term_string.length()) {
 			error_handler.set_error(ERROR_PARSE_TERMS,line_number,value_string,file_name);
@@ -227,7 +227,7 @@ TPolynomial *TParse::get_polynomial(string& line_string, string value_string, st
 	int number_terms;
 
 	number_terms=get_terms(line_string,value_string,terms);
-	if (error_handler.fail()) return(NULL);
+	if (error_handler.fail()) return(nullptr);
 	return_function=new TPolynomial(number_terms, terms, variable_string.length());
 	return(return_function);
 }
@@ -238,7 +238,7 @@ TUserFunction *TParse::get_function(string& line_string, string value_string, st
 	string function_string;
 
 	function_string=get_name(line_string,value_string);
-	if(error_handler.fail()) return(NULL);
+	if(error_handler.fail()) return(nullptr);
 	else {
 		return_function=new TUserFunction(function_string,variable_string);
 		return_function->translate();
@@ -246,7 +246,7 @@ TUserFunction *TParse::get_function(string& line_string, string value_string, st
 			delete return_function;
 			error_handler.clear();
 			error_handler.set_error(ERROR_PARSE_FUNCTION,line_number,value_string,file_name);
-			return(NULL);
+			return(nullptr);
 		}
 	}
 	return(return_function);
@@ -265,25 +265,25 @@ TFunction *TParse::get_general_function(string& line_string, string value_string
 		switch(function_type) {
 			case CONSTANT:
 				constant_value=get_float(line_string,value_string);
-				if (error_handler.fail()) return(NULL);
+				if (error_handler.fail()) return(nullptr);
 				return(new TConstant(constant_value,variable_string.length()));
 			case POLYNOMIAL:
 				user_polynomial=get_polynomial(line_string,value_string,variable_string);
-				if (error_handler.fail()) return(NULL);
+				if (error_handler.fail()) return(nullptr);
 				return(user_polynomial);
 			case USER_FUNCTION:
 				user_function=get_function(line_string,value_string,variable_string);
-				if (error_handler.fail()) return(NULL);
+				if (error_handler.fail()) return(nullptr);
 				return(user_function);
-			default: assert(FALSE); return(NULL);
+			default: assert(FALSE); return(nullptr);
 		}
 	}
-	else return(NULL);
+	else return(nullptr);
 }
 
 void TParse::test_string(const string& line_string)
 {
-	if (line_string.find_first_not_of(" \n\t")!=NPOS)
+	if (line_string.find_first_not_of(" \n\t")!=std::string::npos)
 		error_handler.set_error(ERROR_PARSE_UNKNOWN_SYMBOL,line_number,"",file_name);
 }
 
@@ -327,12 +327,12 @@ TMaterialParamModel *TParseMaterialParam::get_material_parameter(MaterialParam p
 	segments=(int)get_long(parameter_line,"SEGMENTS");
 	if (error_handler.fail()) {
 // Single Function
-		if (error_handler.get_error_number()!=ERROR_PARSE_NAME_STRING) return(NULL);
+		if (error_handler.get_error_number()!=ERROR_PARSE_NAME_STRING) return(nullptr);
 		error_handler.clear();
 
 		general_function=get_material_param_function(param,parameter_line,function_variables);
-		if (error_handler.fail()) return(NULL);
-		return(new TMaterialParamModel(new TPieceWiseFunction(general_function,NULL,NULL)));
+		if (error_handler.fail()) return(nullptr);
+		return(new TMaterialParamModel(new TPieceWiseFunction(general_function,nullptr,nullptr)));
 	}
 
 // PieceWise Function
@@ -341,24 +341,24 @@ TMaterialParamModel *TParseMaterialParam::get_material_parameter(MaterialParam p
 	while (!input_file_stream.eof() && !error_handler.fail() && (i<segments)) {
 		i++;
 		string segment_line(get_string());
-		if (error_handler.fail()) return(NULL);
+		if (error_handler.fail()) return(nullptr);
 
 		for (j=0;j<MAT_MAX_NUMBER_PARAMETER_VAR;j++) {
-			lower_limit[j]=(TFunction *)NULL;
-			upper_limit[j]=(TFunction *)NULL;
+			lower_limit[j]=nullptr;
+			upper_limit[j]=nullptr;
 		}
 
 		for (j=0;j<number_limit_variables;j++) {
 			get_function_limit(segment_line,function_variables.substr(j,1),limit_variables,
 							   lower_limit[j],upper_limit[j]);
-			if (error_handler.fail()) return(NULL);
+			if (error_handler.fail()) return(nullptr);
 		}
 
 		general_function=get_material_param_function(param,segment_line,function_variables);
 		if (!error_handler.fail()) {
 			return_model->add_function(new TPieceWiseFunction(general_function,lower_limit,upper_limit));
 		}
-		else return(NULL);
+		else return(nullptr);
 	}
 	return(return_model);
 }
@@ -378,25 +378,25 @@ TFunction *TParseMaterialParam::get_material_param_function(MaterialParam param,
 	general_function=get_general_function(parameter_line,"VALUE",function_variables);
 	if (!error_handler.fail()) return(general_function);
 	else {
-		if (error_handler.get_error_number()!=ERROR_PARSE_NAME_STRING) return(NULL);
+		if (error_handler.get_error_number()!=ERROR_PARSE_NAME_STRING) return(nullptr);
 		error_handler.clear();
 
 		model_name=get_name(parameter_line,"MODEL");
-		if (error_handler.fail()) return(NULL);
+		if (error_handler.fail()) return(nullptr);
 
 		if (model_name=="BAND_GAP") {
 			if (!TModelBandGap::valid_model(param)) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INVALID,line_number,model_name,file_name);
-				return(NULL);
+				return(nullptr);
 			}
 
 			number_terms=get_terms(parameter_line,"TERMS",terms);
-			if (error_handler.fail()) return(NULL);
+			if (error_handler.fail()) return(nullptr);
 
 			if (number_terms!=TModelBandGap::get_required_terms()) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INCORRECT_TERMS,line_number,"",file_name);
 				delete[] terms;
-				return(NULL);
+				return(nullptr);
 			}
 
 			model_function=new TModelBandGap(terms);
@@ -407,16 +407,16 @@ TFunction *TParseMaterialParam::get_material_param_function(MaterialParam param,
 		if (model_name=="THERMAL_CONDUCT") {
 			if (!TModelThermalConductivity::valid_model(param)) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INVALID,line_number,model_name,file_name);
-				return(NULL);
+				return(nullptr);
 			}
 
 			number_terms=get_terms(parameter_line,"TERMS",terms);
-			if (error_handler.fail()) return(NULL);
+			if (error_handler.fail()) return(nullptr);
 
 			if (number_terms!=TModelThermalConductivity::get_required_terms()) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INCORRECT_TERMS,line_number,"",file_name);
 				delete[] terms;
-				return(NULL);
+				return(nullptr);
 			}
 
 			model_function=new TModelThermalConductivity(terms);
@@ -427,16 +427,16 @@ TFunction *TParseMaterialParam::get_material_param_function(MaterialParam param,
 		if (model_name=="POWER_ABSORPTION") {
 			if (!TModelPowerAbsorption::valid_model(param)) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INVALID,line_number,model_name,file_name);
-				return(NULL);
+				return(nullptr);
 			}
 
 			number_terms=get_terms(parameter_line,"TERMS",terms);
-			if (error_handler.fail()) return(NULL);
+			if (error_handler.fail()) return(nullptr);
 
 			if (number_terms!=TModelPowerAbsorption::get_required_terms()) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INCORRECT_TERMS,line_number,"",file_name);
 				delete[] terms;
-				return(NULL);
+				return(nullptr);
 			}
 
 			model_function=new TModelPowerAbsorption(terms);
@@ -447,16 +447,16 @@ TFunction *TParseMaterialParam::get_material_param_function(MaterialParam param,
 		if (model_name=="POWER_BAND_GAP_ABSORPTION") {
 			if (!TModelPowerAbsorptionBandGap::valid_model(param)) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INVALID,line_number,model_name,file_name);
-				return(NULL);
+				return(nullptr);
 			}
 
 			number_terms=get_terms(parameter_line,"TERMS",terms);
-			if (error_handler.fail()) return(NULL);
+			if (error_handler.fail()) return(nullptr);
 
 			if (number_terms!=TModelPowerAbsorptionBandGap::get_required_terms()) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INCORRECT_TERMS,line_number,"",file_name);
 				delete[] terms;
-				return(NULL);
+				return(nullptr);
 			}
 
 			model_function=new TModelPowerAbsorptionBandGap(terms);
@@ -467,16 +467,16 @@ TFunction *TParseMaterialParam::get_material_param_function(MaterialParam param,
 		if (model_name=="EXP_ABSORPTION") {
 			if (!TModelExpAbsorption::valid_model(param)) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INVALID,line_number,model_name,file_name);
-				return(NULL);
+				return(nullptr);
 			}
 
 			number_terms=get_terms(parameter_line,"TERMS",terms);
-			if (error_handler.fail()) return(NULL);
+			if (error_handler.fail()) return(nullptr);
 
 			if (number_terms!=TModelExpAbsorption::get_required_terms()) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INCORRECT_TERMS,line_number,"",file_name);
 				delete[] terms;
-				return(NULL);
+				return(nullptr);
 			}
 
 			model_function=new TModelExpAbsorption(terms);
@@ -487,16 +487,16 @@ TFunction *TParseMaterialParam::get_material_param_function(MaterialParam param,
 		if (model_name=="EXP_BAND_GAP_ABSORPTION") {
 			if (!TModelExpAbsorptionBandGap::valid_model(param)) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INVALID,line_number,model_name,file_name);
-				return(NULL);
+				return(nullptr);
 			}
 
 			number_terms=get_terms(parameter_line,"TERMS",terms);
-			if (error_handler.fail()) return(NULL);
+			if (error_handler.fail()) return(nullptr);
 
 			if (number_terms!=TModelExpAbsorptionBandGap::get_required_terms()) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INCORRECT_TERMS,line_number,"",file_name);
 				delete[] terms;
-				return(NULL);
+				return(nullptr);
 			}
 
 			model_function=new TModelExpAbsorptionBandGap(terms);
@@ -507,7 +507,7 @@ TFunction *TParseMaterialParam::get_material_param_function(MaterialParam param,
 		if (model_name=="OSCILLATOR_ABSORPTION") {
 			if (!TModelAlGaAsAbsorption::valid_model(param)) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INVALID,line_number,model_name,file_name);
-				return(NULL);
+				return(nullptr);
 			}
 
 			return(new TModelAlGaAsAbsorption);
@@ -516,7 +516,7 @@ TFunction *TParseMaterialParam::get_material_param_function(MaterialParam param,
 		if (model_name=="OSCILLATOR_REFRACTIVE_INDEX") {
 			if (!TModelAlGaAsRefractiveIndex::valid_model(param)) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INVALID,line_number,model_name,file_name);
-				return(NULL);
+				return(nullptr);
 			}
 
 			return(new TModelAlGaAsRefractiveIndex);
@@ -525,16 +525,16 @@ TFunction *TParseMaterialParam::get_material_param_function(MaterialParam param,
 		if (model_name=="MOBILITY") {
 			if (!TModelMobility::valid_model(param)) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INVALID,line_number,model_name,file_name);
-				return(NULL);
+				return(nullptr);
 			}
 
 			number_terms=get_terms(parameter_line,"TERMS",terms);
-			if (error_handler.fail()) return(NULL);
+			if (error_handler.fail()) return(nullptr);
 
 			if (number_terms!=TModelMobility::get_required_terms()) {
 				error_handler.set_error(ERROR_PARSE_MODEL_INCORRECT_TERMS,line_number,"",file_name);
 				delete[] terms;
-				return(NULL);
+				return(nullptr);
 			}
 
 			model_function=new TModelMobility(terms);
@@ -544,7 +544,7 @@ TFunction *TParseMaterialParam::get_material_param_function(MaterialParam param,
 
 
 		error_handler.set_error(ERROR_PARSE_MODEL_UNKNOWN,line_number,model_name,file_name);
-		return(NULL);
+		return(nullptr);
 	}
 }
 
@@ -594,7 +594,7 @@ TDeviceFileInput TParseDevice::parse_device(void)
 	device_input.delete_contents();
 	while (!input_file_stream.eof() && !error_handler.fail()) {
 		new_line=get_string();
-		if (!new_line.is_null()) process_line(new_line);
+		if (!new_line.empty()) process_line(new_line);
 	}
 	if (!error_handler.fail()) apply_defaults();
 	return(device_input);
@@ -604,7 +604,7 @@ void TParseDevice::process_line(string line_string)
 {
 	MaterialParam i;
 
-	assert(!line_string.is_null());
+	assert(!line_string.empty());
 
 	if (line_string.find("GRID",0)==0) {
 		process_grid(line_string);
@@ -779,9 +779,9 @@ void TParseDevice::process_region(string line_string)
 	new_region.length=get_float(line_string,"LENGTH");
 	if (error_handler.fail()) return;
 
-	if (line_string.find("BULK")!=NPOS) new_region.type=BULK;
+	if (line_string.find("BULK")!=std::string::npos) new_region.type=BULK;
 	else {
-		if (line_string.find("QW")!=NPOS) new_region.type=QW;
+		if (line_string.find("QW")!=std::string::npos) new_region.type=QW;
 		else {
 			error_handler.set_error(ERROR_PARSE_REGION_TYPE,line_number,"",file_name);
 			return;
@@ -802,9 +802,9 @@ void TParseDevice::process_cavity(string line_string)
 	new_cavity.length=get_float(line_string,"LENGTH");
 	if (error_handler.fail()) return;
 
-	if (line_string.find("SURFACE")!=NPOS) new_cavity.type=SURFACE_CAVITY;
+	if (line_string.find("SURFACE")!=std::string::npos) new_cavity.type=SURFACE_CAVITY;
 	else {
-		if (line_string.find("EDGE")!=NPOS) new_cavity.type=EDGE_CAVITY;
+		if (line_string.find("EDGE")!=std::string::npos) new_cavity.type=EDGE_CAVITY;
 		else {
 			error_handler.set_error(ERROR_PARSE_CAVITY_TYPE,line_number,"",file_name);
 			return;
@@ -824,9 +824,9 @@ void TParseDevice::process_mirror(string line_string)
 	new_mirror.reflectivity=get_float(line_string,"REF");
 	if (error_handler.fail()) return;
 
-	if (line_string.find("METAL")!=NPOS) new_mirror.type=METAL_MIRROR;
+	if (line_string.find("METAL")!=std::string::npos) new_mirror.type=METAL_MIRROR;
 	else {
-		if (line_string.find("DBR")!=NPOS) new_mirror.type=DBR_MIRROR;
+		if (line_string.find("DBR")!=std::string::npos) new_mirror.type=DBR_MIRROR;
 		else {
 			error_handler.set_error(ERROR_PARSE_MIRROR_TYPE,line_number,"",file_name);
 			return;
@@ -843,12 +843,12 @@ void TParseDevice::process_repeat(string line_string)
 
 	string current_repeat_string(line_string);
 
-	if (line_string.find("START")!=NPOS) {
+	if (line_string.find("START")!=std::string::npos) {
 		if (start_repeat_pos!=0) {
 			error_handler.set_error(ERROR_PARSE_DOUBLE_REPEAT,line_number,"",file_name);
 			return;
 		}
-		else start_repeat_pos=input_file_stream.rdbuf()->seekoff(0,ios::cur,ios::in);
+		else start_repeat_pos=input_file_stream.tellg();
 	}
 	else {
 		repeat_times=(int)get_long(line_string,"REPEAT");
@@ -859,7 +859,7 @@ void TParseDevice::process_repeat(string line_string)
 			return;
 		}
 		for (i=1;i<repeat_times;i++) {
-			input_file_stream.rdbuf()->seekoff(start_repeat_pos,ios::beg,ios::in);
+			input_file_stream.seekg(start_repeat_pos);
 			new_line=get_string();
 			while (new_line!=current_repeat_string) {
 				process_line(new_line);
@@ -889,7 +889,7 @@ void TParseDevice::process_radius(string line_string)
 void TParseDevice::process_material_param(string line_string, MaterialParam param)
 {
 	MaterialParamInput new_param_input;
-	extern char *material_parameters_variables[];
+	extern const char *material_parameters_variables[];
 
 	new_param_input.length=get_float(line_string,"LENGTH");
 	if (error_handler.fail()) return;
@@ -964,7 +964,7 @@ void TParseMaterial::parse_material(void)
 			process_alloy(line_string);
 			continue;
 		}
-		if (!line_string.is_null())
+		if (!line_string.empty())
 			error_handler.set_error(ERROR_PARSE_UNKNOWN_SYMBOL,line_number,"",file_name);
 	}
 	if (!error_handler.fail()) material_parameters.set_ready(TRUE);
@@ -988,7 +988,7 @@ void TParseMaterial::process_alloy(string line_string)
 	MaterialParam i,j;
 	logical mat_processed;
 	string alloy_name, parameter_line;
-	extern char *material_parameters_variables[];
+	extern const char *material_parameters_variables[];
 
 	alloy_name=get_name(line_string,"ALLOY");
 	if (error_handler.fail()) return;
@@ -1016,7 +1016,7 @@ void TParseMaterial::process_alloy(string line_string)
 		}
 		if (mat_processed) continue;
 
-		if (!parameter_line.is_null())
+		if (!parameter_line.empty())
 			error_handler.set_error(ERROR_PARSE_UNKNOWN_SYMBOL,line_number,"",file_name);
 	}
 }

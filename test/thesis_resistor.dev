@@ -1,0 +1,9 @@
+# Thesis Appendix A, Test 3 - Lattice Temperature (Listing 10)
+# GaAs resistor: 1.0 micron, n-type Nd=1e17, biased to 1.0V
+# Reference: J = 1.25e6 A/cm2 (analytical: 1.28e6 A/cm2)
+
+grid length=1.0 points=200
+
+structure material=gaas length=1.0
+
+doping length=1.0 Nd=1e17

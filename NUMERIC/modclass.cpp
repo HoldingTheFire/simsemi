@@ -267,7 +267,7 @@ void TMode::comp_total_spontaneous(int start_node, int end_node, prec cavity_are
 
 error TMode::field_iterate(prec& iteration_error, prec initial_error, int iteration_number)
 {
-	static error_sign;
+	static prec error_sign;
 	prec curr_wavelength;
 	prec next_forward_poynting, prev_forward_poynting, curr_forward_poynting;
 

@@ -104,8 +104,8 @@ private:
 public:
 	void read_data_file(const char *filename);
 	void write_data_file(ofstream& output_file, TValueFlag write_flags,
-						 FlagType ref_flag_type=(FlagType)NULL,
-						 flag ref_flag_value=(flag)NULL);
+						 FlagType ref_flag_type=(FlagType)0,
+						 flag ref_flag_value=(flag)0);
 private:
 	void read_state_file(FILE *file_ptr);
 public:
@@ -201,7 +201,7 @@ TDevice::~TDevice(void)
 
 	if (solution_ptr) delete solution_ptr;
 
-    material_parameters.put_device_file(NULL);
+    material_parameters.put_device_file(nullptr);
 }
 
 int TDevice::get_number_objects(FlagType flag_type)
@@ -1053,7 +1053,7 @@ void TDevice::read_data_file(const char *filename)
 		if (columns>0) environment.set_update_flags(flag_type_array[columns],flag_array[columns]);
 		columns++;
 
-		token=strtok(NULL,",");
+		token=strtok(nullptr,",");
 	}
 
 	while (!feof(file_ptr)) {

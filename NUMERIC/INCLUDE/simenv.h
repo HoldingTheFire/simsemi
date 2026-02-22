@@ -92,13 +92,13 @@ public:
 	void load_file(const char *filename);
 	void read_data_file(const char *filename);
 	void write_data_file(const char *filename, TValueFlag write_flags,
-						  FlagType ref_flag_type=(FlagType)NULL,
-						  flag ref_flag_value=(flag)NULL);
+						  FlagType ref_flag_type=(FlagType)0,
+						  flag ref_flag_value=(flag)0);
 	void write_state_file(const char *filename);
 private:
 	void read_state_file(FILE *file_ptr);
 	void delete_undo_file(void)
-		{ if (access(undo_filepath.c_str(),0)==0) remove(undo_filepath.c_str()); }
+		{ if (std::filesystem::exists(undo_filepath.c_str())) remove(undo_filepath.c_str()); }
 
 // Spectrum functions
 public:

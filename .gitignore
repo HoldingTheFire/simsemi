@@ -11,3 +11,9 @@
 *.lai
 *.la
 *.a
+
+# Build output
+build/
+
+# Claude Code
+.claude/

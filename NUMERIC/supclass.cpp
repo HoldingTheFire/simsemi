@@ -739,7 +739,7 @@ int TValueFlagWithObject::get_object(FlagType flag_type, int object_number)
 
 	assert(valid_flag_type(flag_type));
 
-	if (!number_objects[flag_type-1]) return(NULL);
+	if (!number_objects[flag_type-1]) return(0);
 
 	if (object_number>=number_objects[flag_type-1]) object_number=number_objects[flag_type-1]-1;
 

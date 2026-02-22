@@ -26,6 +26,8 @@ class TNode: protected TElectron, protected THole, protected TGrid {
 	friend TQWThermalElement;
 	friend TOhmicBoundaryElement;
 	friend TBoundaryThermalElement;
+	friend T2DElectron;
+	friend T2DHole;
 private:
 	prec reduced_dos_mass;
 	prec total_charge;
@@ -36,7 +38,7 @@ private:
 	RadiativeHeat radiative_heat;
 	prec total_heat;
 public:
-	TNode(int node_number, RegionType region_type, TQuantumWell *qw_ptr=NULL);
+	TNode(int node_number, RegionType region_type, TQuantumWell *qw_ptr=nullptr);
 	void comp_charge(void)
 		{ total_charge=(THole::total_conc-TElectron::total_conc+
 						TElectron::ionized_doping_conc-THole::ionized_doping_conc); }

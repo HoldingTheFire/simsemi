@@ -906,8 +906,8 @@ void TQWElectricalElement::update_sub_nodes(void)
 			position=(*temp_ptr)->position;
 			potential=prev_potential-prev_field*(position-prev_position);
 			(*temp_ptr)->potential=potential;
-			(*temp_ptr)->init_value(ELECTRON,PLANCK_POT,qw_node,NULL);
-			(*temp_ptr)->init_value(HOLE,PLANCK_POT,qw_node,NULL);
+			(*temp_ptr)->init_value(ELECTRON,PLANCK_POT,qw_node,nullptr);
+			(*temp_ptr)->init_value(HOLE,PLANCK_POT,qw_node,nullptr);
 
 			permitivity=(*temp_ptr)->permitivity;
 			charge=(*temp_ptr)->total_charge;
@@ -938,8 +938,8 @@ void TQWElectricalElement::update_sub_nodes(void)
 			position=(*temp_ptr)->position;
 			potential=next_potential+next_field*(next_position-position);
 			(*temp_ptr)->potential=potential;
-			(*temp_ptr)->init_value(ELECTRON,PLANCK_POT,qw_node,NULL);
-			(*temp_ptr)->init_value(HOLE,PLANCK_POT,qw_node,NULL);
+			(*temp_ptr)->init_value(ELECTRON,PLANCK_POT,qw_node,nullptr);
+			(*temp_ptr)->init_value(HOLE,PLANCK_POT,qw_node,nullptr);
 
 			permitivity=(*temp_ptr)->permitivity;
 			charge=(*temp_ptr)->total_charge;

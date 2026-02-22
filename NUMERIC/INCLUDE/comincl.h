@@ -16,19 +16,41 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <assert.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <io.h>
-#include <alloc.h>
-#include <fstream.h>
-#include <cstring.h>
-#include <complex.h>
+#include <cassert>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <complex>
+#include <fstream>
+#include <string>
+#include <algorithm>
+#include <filesystem>
+
+using std::string;
+using std::ofstream;
+using std::ifstream;
+using std::ios;
+using std::streampos;
+typedef std::complex<double> complex;
+using std::real;
+using std::imag;
+using std::norm;
+using std::conj;
+using std::exp;
+
 #include "simconst.h"
 #include "globfunc.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "formulc.h"
+#ifdef __cplusplus
+}
+#endif
+
 #include "simstrct.h"
 #include "wiofunc.h"
 #include "simsup.h"
@@ -36,4 +58,3 @@
 #include "simmat.h"
 #include "siminf.h"
 #include "simenv.h"
-

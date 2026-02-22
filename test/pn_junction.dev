@@ -1,0 +1,17 @@
+# Simple Si p-n junction for validation
+# N-type (1e17 cm-3) | P-type (1e17 cm-3)
+# Total length: 2 microns (1um each side)
+
+# Grid: 1um n-side + 1um p-side
+GRID LENGTH=1e-4 POINTS=50
+GRID LENGTH=1e-4 POINTS=50
+
+# Doping: n-side donors, p-side acceptors
+DOPING LENGTH=1e-4 ND=1e17
+DOPING LENGTH=1e-4 NA=1e17
+
+# Structure: all silicon
+STRUCTURE LENGTH=2e-4 MATERIAL=Si
+
+# Region: bulk semiconductor
+REGION LENGTH=2e-4 BULK

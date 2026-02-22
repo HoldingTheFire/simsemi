@@ -1,0 +1,12 @@
+# Thesis Appendix A, Test 1 - Depletion Region Field (Listing 8)
+# Si pn diode: 1.0 micron, p-type Na=1e17, n-type Nd=3e17
+# Reference: peak E-field ~ -1.3e5 V/cm (complete depletion approx)
+
+grid length=.45 points=100
+grid length=.1 points=200
+grid length=.45 points=100
+
+structure length=1.00 material=si
+
+doping length=.5 Na=1e17
+doping length=.5 Nd=3e17
