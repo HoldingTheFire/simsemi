@@ -157,7 +157,7 @@ ninja -j$(nproc)
 
 **Reference:** `Thesis/08AppendixC.pdf` — User Manual Version 1.4.2
 
-**Status:** The GUI covers ~70% of the original's features. The gaps below are ordered by impact.
+**Status:** The GUI covers ~95% of the original's features. All high and medium priority gaps are implemented.
 
 #### Implemented ✓
 
@@ -180,20 +180,20 @@ ninja -j$(nproc)
 | File\|Save (plot data as CSV) | Export CSV button on each plot |
 | Help\|About | About dialog |
 
-#### Missing — High Priority
+#### High Priority — COMPLETE ✓
 
-- [ ] **Plot\|Scale dialog** (§8.2.4): Set min/max for x and y axes, choose linear/log y-axis, y-axis operations (none, -y, abs(y)). Currently ImPlot has built-in zoom/pan but no explicit scale dialog with log/abs options.
-- [ ] **Plot\|Trace Window** (§8.2.4): Mouse-over crosshair showing (x, y) values for the closest data point. ImPlot has hover tooltips but no dedicated trace dialog.
-- [ ] **Voltage Macro / Sweep** (Figure 48: TDialogVoltageMacro, TDialogSelectMacro): Automated voltage sweep from the GUI with configurable start/end/step. The CLI has `-sweep` but the GUI does not expose this. Should log I-V data.
-- [ ] **Data menu** (§8.3.5, Table 7): Export non-position-dependent scalar data (operating point, convergence info) and custom multi-parameter CSV. Original had TDialogSelectOneParameter, TDialogSelectParameters, TDialogDataWriteAll, TDialogWriteBand.
-- [ ] **Laser dialog** (Figure 48: TDialogLaser): Laser-specific parameters for VCSEL simulation. Currently no GUI for viewing/editing laser cavity output power, mode gain, or threshold.
-- [ ] **Plot\|External Optical Spectra** (§8.2.4): Plot the external optical spectrum when optical generation is enabled. Should show incident spectrum intensity vs photon energy/wavelength.
+- [x] **Plot\|Scale dialog** (§8.2.4): Scale... button on plot toolbar with custom axis limits, log Y toggle, y-axis operations (none, -y, abs(y))
+- [x] **Plot\|Trace Window** (§8.2.4): Trace button on plot toolbar with crosshair overlay, nearest-node snapping, annotation, status bar readout
+- [x] **Voltage Macro / Sweep**: Device > Voltage Sweep dialog with start/end/step, contact selection, background thread, live I-V plot, CSV export
+- [x] **Data menu** (§8.3.5): Data > Export Operating Point (.txt), Export All Spatial Data (.csv, 19 columns), Export Band Data (.csv)
+- [x] **Laser dialog**: Device > Laser Info dialog showing modes (energy, wavelength, photons, lifetime, losses, gain), cavities (area, type, length), mirrors (power)
+- [x] **Plot\|External Optical Spectra** (§8.2.4): Plot > External Optical Spectra showing incident spectrum intensity vs photon energy
 
-#### Missing — Medium Priority
+#### Medium Priority — COMPLETE ✓
 
-- [ ] **Plot\|Freeze Plot / Melt Plot** (§8.2.4): Freeze plot data at current state for comparison (e.g., overlay band diagrams at two different biases). Melt to resume live updates.
-- [ ] **File\|Save for device text** (§8.2.5): The device editor has Generate, but no explicit "Save device file to disk" without generating. Should support saving the text buffer back to the `.dev` file.
-- [ ] **Plot\|Auto-Scale** (§8.2.4): Menu item to reset plot axes to automatic range after manual zoom. ImPlot's double-click-to-reset partially covers this.
+- [x] **Plot\|Freeze Plot / Melt Plot** (§8.2.4): Freeze/Melt buttons on plot toolbar, grey overlay of frozen data for comparison across bias points
+- [x] **File\|Save for device text** (§8.2.5): Save... button in device editor toolbar, writes text buffer to .dev file via native save dialog
+- [x] **Plot\|Auto-Scale** (§8.2.4): Auto-fit button on plot toolbar resets axes to fit all data; also available in Scale dialog
 
 #### Missing — Low Priority (deferred or not needed)
 

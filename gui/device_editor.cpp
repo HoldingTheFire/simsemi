@@ -9,8 +9,10 @@
 */
 
 #include "comincl.h"
+#undef UCHAR
 #include "imgui.h"
 #include "app.h"
+#include "portable-file-dialogs.h"
 #include <fstream>
 #include <cstdio>
 #include <filesystem>
@@ -52,6 +54,22 @@ void SimWindowsApp::render_device_editor()
 
         // Clean up temp file
         std::remove(tmp_path.c_str());
+    }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Save...")) {
+        std::string default_name = device_file_path.empty() ? "device.dev" : device_file_path;
+        auto dest = pfd::save_file("Save Device File", default_name,
+            {"Device Files", "*.dev", "All Files", "*"}).result();
+        if (!dest.empty()) {
+            std::ofstream ofs(dest);
+            if (ofs.good()) {
+                ofs << device_text;
+                add_log("Saved device file: " + dest);
+            } else {
+                add_log("ERROR: Could not write " + dest);
+            }
+        }
     }
 
     ImGui::SameLine();

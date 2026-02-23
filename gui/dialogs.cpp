@@ -12,8 +12,11 @@
 #undef UCHAR
 
 #include "imgui.h"
+#include "implot.h"
 #include "app.h"
 #include "portable-file-dialogs.h"
+#include <fstream>
+#include <cmath>
 
 extern TEnvironment      environment;
 extern TErrorHandler     error_handler;
@@ -663,4 +666,148 @@ void SimWindowsApp::render_dialogs()
 
         ImGui::EndPopup();
     }
+
+    // =====================================================================
+    // Laser Info (regular window, read-only)
+    // =====================================================================
+    if (show_laser_info) {
+        ImGui::SetNextWindowSize(ImVec2(420, 350), ImGuiCond_FirstUseEver);
+        if (ImGui::Begin("Laser Info", &show_laser_info)) {
+            int num_modes = environment.get_number_objects(MODE);
+            int num_cavities = environment.get_number_objects(CAVITY);
+            int num_mirrors = environment.get_number_objects(MIRROR);
+
+            if (num_modes == 0 && num_cavities == 0) {
+                ImGui::TextWrapped("No laser modes or cavities in current device. "
+                    "Laser parameters are only available for devices with cavity/mirror definitions.");
+            }
+
+            if (num_cavities > 0 && ImGui::CollapsingHeader("Cavities", ImGuiTreeNodeFlags_DefaultOpen)) {
+                for (int c = 0; c < num_cavities; c++) {
+                    double area = environment.get_value(CAVITY, AREA, c);
+                    int type = (int)environment.get_value(CAVITY, TYPE, c);
+                    double length = environment.get_value(CAVITY, LENGTH, c);
+                    const char* type_str = (type == 1) ? "Edge" : (type == 2) ? "Surface" : "Unknown";
+                    ImGui::Text("Cavity %d: %s, Area=%.4g cm2, Length=%.4g cm", c, type_str, area, length);
+                }
+            }
+
+            if (num_modes > 0 && ImGui::CollapsingHeader("Lasing Modes", ImGuiTreeNodeFlags_DefaultOpen)) {
+                for (int m = 0; m < num_modes; m++) {
+                    ImGui::PushID(m);
+                    if (ImGui::TreeNode("Mode", "Mode %d", m)) {
+                        double pe = environment.get_value(MODE, MODE_PHOTON_ENERGY, m);
+                        double wl = environment.get_value(MODE, MODE_PHOTON_WAVELENGTH, m);
+                        double tp = environment.get_value(MODE, MODE_TOTAL_PHOTONS, m);
+                        double pl = environment.get_value(MODE, PHOTON_LIFETIME, m);
+                        double ml = environment.get_value(MODE, MIRROR_LOSS, m);
+                        double wg = environment.get_value(MODE, WAVEGUIDE_LOSS, m);
+                        double mg = environment.get_value(MODE, MODE_GAIN, m);
+
+                        ImGui::Text("Photon Energy:    %.6g eV", pe);
+                        ImGui::Text("Wavelength:       %.6g um", wl);
+                        ImGui::Text("Total Photons:    %.6e", tp);
+                        ImGui::Text("Photon Lifetime:  %.6e s", pl);
+                        ImGui::Text("Mirror Loss:      %.6g cm-1", ml);
+                        ImGui::Text("Waveguide Loss:   %.6g cm-1", wg);
+                        ImGui::Text("Mode Gain:        %.6g cm-1", mg);
+                        ImGui::TreePop();
+                    }
+                    ImGui::PopID();
+                }
+            }
+
+            if (num_mirrors > 0 && ImGui::CollapsingHeader("Mirrors", ImGuiTreeNodeFlags_DefaultOpen)) {
+                for (int m = 0; m < num_mirrors; m++) {
+                    double power = environment.get_value(MIRROR, POWER, m);
+                    ImGui::Text("Mirror %d: Power=%.6e W/cm2", m, power);
+                }
+            }
+        }
+        ImGui::End();
+    }
+
+    // =====================================================================
+    // Voltage Sweep (rendered as a regular window, not a popup)
+    // =====================================================================
+    render_voltage_sweep();
+}
+
+void SimWindowsApp::render_voltage_sweep()
+{
+    if (!show_voltage_sweep) return;
+
+    ImGui::SetNextWindowSize(ImVec2(500, 450), ImGuiCond_FirstUseEver);
+    if (!ImGui::Begin("Voltage Sweep", &show_voltage_sweep)) {
+        ImGui::End();
+        return;
+    }
+
+    // Input fields (disabled when sweep is running)
+    ImGui::BeginDisabled(sweep_running);
+    ImGui::InputFloat("Start (V)", &sweep_start, 0.1f, 1.0f, "%.4f");
+    ImGui::InputFloat("End (V)", &sweep_end, 0.1f, 1.0f, "%.4f");
+    ImGui::InputFloat("Step (V)", &sweep_step, 0.01f, 0.1f, "%.4f");
+    ImGui::InputInt("Contact", &sweep_contact);
+    sweep_contact = std::max(0, std::min(sweep_contact, 1));
+    ImGui::EndDisabled();
+
+    // Run/Stop buttons
+    if (!sweep_running) {
+        if (ImGui::Button("Run Sweep")) {
+            start_voltage_sweep();
+        }
+    } else {
+        if (ImGui::Button("Stop Sweep")) {
+            stop_voltage_sweep();
+        }
+        ImGui::SameLine();
+        ImGui::Text("Step %d / %d  V=%.4f", sweep_current_step, sweep_total_steps, sweep_current_voltage);
+    }
+
+    // IV curve plot
+    {
+        std::lock_guard<std::mutex> lock(sweep_mutex);
+        if (!sweep_iv_data.empty()) {
+            // Build separate V and I vectors for ImPlot
+            std::vector<double> vv, ii;
+            vv.reserve(sweep_iv_data.size());
+            ii.reserve(sweep_iv_data.size());
+            for (auto& [v, i] : sweep_iv_data) {
+                vv.push_back(v);
+                ii.push_back(i);
+            }
+
+            if (ImPlot::BeginPlot("I-V Curve", ImVec2(-1, 250))) {
+                ImPlot::SetupAxes("Voltage (V)", "Current (A/cm2)");
+                ImPlot::PlotLine("I-V", vv.data(), ii.data(), (int)vv.size());
+                ImPlot::EndPlot();
+            }
+        }
+    }
+
+    // Export CSV button
+    if (!sweep_iv_data.empty() && !sweep_running) {
+        if (ImGui::Button("Export CSV")) {
+            auto dest = pfd::save_file("Export Sweep Data", "iv_sweep.csv",
+                {"CSV Files", "*.csv", "All Files", "*"}).result();
+            if (!dest.empty()) {
+                std::ofstream ofs(dest);
+                if (ofs.good()) {
+                    ofs << "Voltage(V),Current(A/cm2)\n";
+                    std::lock_guard<std::mutex> lock(sweep_mutex);
+                    for (auto& [v, i] : sweep_iv_data)
+                        ofs << v << "," << i << "\n";
+                    add_log("Exported sweep: " + dest);
+                }
+            }
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Clear Results")) {
+            std::lock_guard<std::mutex> lock(sweep_mutex);
+            sweep_iv_data.clear();
+        }
+    }
+
+    ImGui::End();
 }

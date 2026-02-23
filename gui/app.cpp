@@ -14,6 +14,7 @@
 #include "implot.h"
 #include "app.h"
 #include <cstdio>
+#include <cmath>
 #include <filesystem>
 
 // NUMERIC globals (declared extern in SIMSTRCT.H)
@@ -128,6 +129,64 @@ void SimWindowsApp::save_state(const char* path)
     }
 }
 
+void SimWindowsApp::start_voltage_sweep()
+{
+    if (sweep_running || solving) return;
+
+    sweep_total_steps = (int)std::round((sweep_end - sweep_start) / sweep_step) + 1;
+    if (sweep_total_steps <= 0) {
+        add_log("Invalid sweep parameters");
+        return;
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(sweep_mutex);
+        sweep_iv_data.clear();
+    }
+
+    sweep_running = true;
+    sweep_current_step = 0;
+
+    sweep_thread = std::thread([this]() {
+        for (int i = 0; i < sweep_total_steps && sweep_running; i++) {
+            double V = sweep_start + i * (double)sweep_step;
+            sweep_current_voltage = V;
+            sweep_current_step = i + 1;
+
+            environment.put_value(CONTACT, APPLIED_BIAS, V, sweep_contact);
+            environment.solve();
+
+            if (error_handler.fail()) {
+                add_log("Sweep failed at V=" + std::to_string(V));
+                break;
+            }
+
+            double I = environment.get_value(CONTACT, TOTAL_CURRENT, sweep_contact);
+            {
+                std::lock_guard<std::mutex> lock(sweep_mutex);
+                sweep_iv_data.push_back({V, I});
+            }
+
+            char buf[128];
+            snprintf(buf, sizeof(buf), "V=%.4f  I=%.6e A/cm2", V, I);
+            add_log(buf);
+        }
+
+        sweep_running = false;
+        add_log("Voltage sweep complete.");
+    });
+    sweep_thread.detach();
+}
+
+void SimWindowsApp::stop_voltage_sweep()
+{
+    if (sweep_running) {
+        sweep_running = false;
+        environment.set_stop_solution(TRUE);
+        add_log("Stopping voltage sweep...");
+    }
+}
+
 void SimWindowsApp::open_band_diagram()
 {
     PlotWindow pw;
@@ -206,6 +265,13 @@ void SimWindowsApp::render()
 
 void SimWindowsApp::shutdown()
 {
+    if (sweep_running) {
+        sweep_running = false;
+        environment.set_stop_solution(TRUE);
+        for (int i = 0; i < 50 && sweep_running; i++) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    }
     if (solving) {
         environment.set_stop_solution(TRUE);
         // Give solver a moment to stop

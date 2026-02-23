@@ -89,6 +89,7 @@ add_executable(simgui
     gui/menu.cpp
     gui/dialogs.cpp
     gui/plots.cpp
+    gui/data_export.cpp
     gui/device_editor.cpp
     gui/vendor/imgui/imgui.cpp
     gui/vendor/imgui/imgui_draw.cpp

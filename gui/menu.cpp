@@ -109,6 +109,12 @@ void SimWindowsApp::render_menu_bar()
 
         ImGui::Separator();
 
+        if (ImGui::MenuItem("Voltage Sweep...", nullptr, false, has_device && !sweep_running)) {
+            show_voltage_sweep = true;
+        }
+
+        ImGui::Separator();
+
         if (ImGui::MenuItem("Contacts...", nullptr, false, has_device)) {
             show_contacts = true;
         }
@@ -129,6 +135,9 @@ void SimWindowsApp::render_menu_bar()
 
         if (ImGui::MenuItem("Device Info...", nullptr, false, device_loaded)) {
             show_device_info = true;
+        }
+        if (ImGui::MenuItem("Laser Info...", nullptr, false, device_loaded)) {
+            show_laser_info = true;
         }
 
         ImGui::EndMenu();
@@ -212,6 +221,50 @@ void SimWindowsApp::render_menu_bar()
                       GRID_ELECTRICAL, TEMPERATURE);
         }
 
+        ImGui::Separator();
+        ImGui::TextDisabled("Optical");
+
+        if (ImGui::MenuItem("External Optical Spectra")) {
+            int num_spec = environment.get_number_objects(SPECTRUM);
+            if (num_spec > 0) {
+                PlotWindow pw;
+                pw.title = "External Optical Spectra";
+                pw.y_label = "Intensity (W/cm2)";
+                pw.y_flag_type = SPECTRUM;
+                pw.y_flag = INCIDENT_INPUT_INTENSITY;
+                pw.is_spectrum_plot = true;
+                open_plots.push_back(pw);
+            } else {
+                add_log("No optical spectrum defined. Use Environment > Optical Input first.");
+            }
+        }
+
+        ImGui::EndMenu();
+    }
+
+    // --- Data ---
+    if (ImGui::BeginMenu("Data", device_loaded)) {
+        if (ImGui::MenuItem("Export Operating Point...")) {
+            auto dest = pfd::save_file("Export Operating Point", "operating_point.txt",
+                {"Text Files", "*.txt", "All Files", "*"}).result();
+            if (!dest.empty()) {
+                export_operating_point(dest.c_str());
+            }
+        }
+        if (ImGui::MenuItem("Export All Spatial Data...")) {
+            auto dest = pfd::save_file("Export All Spatial Data", "spatial_data.csv",
+                {"CSV Files", "*.csv", "All Files", "*"}).result();
+            if (!dest.empty()) {
+                export_all_spatial(dest.c_str());
+            }
+        }
+        if (ImGui::MenuItem("Export Band Data...")) {
+            auto dest = pfd::save_file("Export Band Data", "band_data.csv",
+                {"CSV Files", "*.csv", "All Files", "*"}).result();
+            if (!dest.empty()) {
+                export_band_data(dest.c_str());
+            }
+        }
         ImGui::EndMenu();
     }
 
