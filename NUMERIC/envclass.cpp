@@ -525,13 +525,12 @@ void TEnvironment::load_file(const char *filename)
 		file_type=STATE_FILE;
 		fread(new_state_version_string,state_version_string_size,1,file_ptr);
 		if (!strncmp(new_state_version_string,state_version_string,state_version_string_size))
-			read_state_file(file_ptr);
+			read_state_file(file_ptr); // read_state_file takes ownership and closes file_ptr
 		else {
 			error_handler.set_error(ERROR_FILE_OLD_STATE,0,"",filename);
 			fclose(file_ptr);
 			return;
 		}
-		fclose(file_ptr);
 	}
 	else {
 		fclose(file_ptr);

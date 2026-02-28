@@ -20,6 +20,7 @@ target_include_directories(formulc PUBLIC
 
 # --- NUMERIC (C++ library: physics simulation core) ---
 set(NUMERIC_SOURCES
+    NUMERIC/strtable.cpp
     NUMERIC/2dcclass.cpp
     NUMERIC/bdcclass.cpp
     NUMERIC/carclass.cpp
