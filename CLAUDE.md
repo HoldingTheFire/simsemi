@@ -153,6 +153,30 @@ ninja -j$(nproc)
 - [x] Removed `#define NULL 0` from `simconst.h`, replaced ~84 `NULL` → `nullptr` across NUMERIC codebase
 - [x] Updated all `extern` declarations to match (`const char*` in globfunc.cpp, envclass.cpp, infclass.cpp, parclass.cpp)
 
+### Phase 6 — Linux Native Build: COMPLETE ✓
+
+**Result:** All targets build and 23/23 tests pass on Linux (GCC 11.4 / Ubuntu 22.04). Verified with AddressSanitizer.
+
+**Build commands (Linux):**
+```bash
+mkdir -p build_linux && cmake -G Ninja -B build_linux
+ninja -C build_linux -j$(nproc)
+build_linux/simtest
+```
+
+**What was fixed (3 bugs, commit `90619a4`):**
+
+1. **`NUMERIC/parclass.cpp` — CRLF line endings** (`get_string()`): `std::getline` on Linux leaves `\r` at the end of Windows-format lines. The function stripped leading whitespace but not trailing `\r`, so `"Segments=4\r"` became `"SEGMENTS=4\r"` after `toupper`, and `get_long` rejected `"4\r"` as non-integer. This caused the entire material file to fail loading on Linux. Fix: `if (!new_line.empty() && new_line.back() == '\r') new_line.pop_back();` after `getline`.
+
+2. **`NUMERIC/envclass.cpp` — double-free on state reload** (`load_file()`): `read_state_file(FILE*)` closes the file pointer at the end of its body. `load_file()` then called `fclose()` on the same pointer again → crash detected by AddressSanitizer. Fix: remove the redundant `fclose` in `load_file()` after the `read_state_file()` call.
+
+3. **`NUMERIC/INCLUDE/strtable.h` + `NUMERIC/strtable.cpp` (NEW) — ~50 GCC warnings**: Definitions with `extern` + initializer in a header (`extern const char *foo[] = {...}`) generate GCC warnings on Linux. Fix: split into declarations-only header (`#pragma once`, `extern` without initializers) and a new `NUMERIC/strtable.cpp` (all definitions). The prior `extern` declarations establish external linkage for `const` arrays so definitions in the `.cpp` need no `extern` keyword. Also fixed `__DATE__`/`__TIME__` missing spaces (literal suffix warning). Added `NUMERIC/strtable.cpp` to `NUMERIC_SOURCES` in `CMakeLists.txt`.
+
+**Repository:**
+
+Active fork: `git@github.com:krzyklo/simwin.git` (origin)
+Upstream:    `git@github.com:HoldingTheFire/simsemi.git` (upstream)
+
 ---
 
 ## Key Architecture Details
@@ -191,7 +215,7 @@ ninja -j$(nproc)
 
 ## Branch
 
-Active work branch: `modernize/phase1-build-system`
+Active work branch: `master` (krzyklo/simwin)
 
 ---
 
@@ -204,3 +228,5 @@ Active work branch: `modernize/phase1-build-system`
 - The `.PRM` material file parser lives in `NUMERIC/` and uses custom tokenization — treat as a black box initially
 - `stdc++fs` is linked for older GCC versions that need it for `<filesystem>` — may need adjustment for MSYS2
 - The audit found NO OWL dependencies, NO Windows API calls, NO Borland typedefs (int16/uint32), and NO inline assembly in the NUMERIC core — it was remarkably portable
+- `strtable.h` is now declarations-only; all string table definitions live in `NUMERIC/strtable.cpp` (part of libnumeric.a). Include `strtable.h` in any TU that needs `executable_path` or the string tables
+- `MATERIAL.PRM` uses Windows CRLF line endings — the parser now handles this on Linux via trailing `\r` stripping in `get_string()`
