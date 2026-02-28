@@ -72,6 +72,8 @@ string TParse::get_string(void)
 		if (input_file_stream.eof()) new_line="";
 		else {
 			std::getline(input_file_stream, new_line);
+			// Strip trailing \r so Windows CRLF files parse correctly on Linux
+			if (!new_line.empty() && new_line.back() == '\r') new_line.pop_back();
 			new_line.erase(0, new_line.find_first_not_of(" \t\n\r"));
 			if (new_line.empty()) continue;
 			if (new_line.find_first_of("#\n")==0) continue;
